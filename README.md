@@ -1,6 +1,6 @@
 # Beom Header
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-1.2.1-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 Insert standardized file headers (shebang, copyright, history…) for various file types in Visual Studio Code.
 
