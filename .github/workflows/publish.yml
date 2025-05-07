@@ -1,0 +1,37 @@
+name: 📦 Build & Publish
+
+# Trigger on push to main, or on new GitHub release
+on:
+  push:
+    branches:
+      - main
+  # optionally, only when you create a Git tag or GitHub release:
+  # release:
+  #   types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+
+      # 1. Check out your code
+      - uses: actions/checkout@v3
+
+      # 2. Set up Node.js and cache npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          # cache: 'npm'
+
+      # 3. Install dependencies & compile TypeScript
+      - run: npm install
+      - run: npm run compile
+
+      # 4. Install vsce (VS Code Extension CLI)
+      - run: npm install -g vsce
+
+      # 5. Publish to the Marketplace
+      - name: Publish Extension
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: vsce publish

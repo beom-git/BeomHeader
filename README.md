@@ -1,6 +1,6 @@
 # Beom Header
 
-![Version](https://img.shields.io/badge/version-1.1.3-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-1.1.4-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 Insert standardized file headers (shebang, copyright, history…) for various file types in Visual Studio Code.
 
@@ -21,7 +21,7 @@ Insert standardized file headers (shebang, copyright, history…) for various fi
 
 ## Requirements
 
-* Visual Studio Code **1.60.0** or higher
+* Visual Studio Code **1.80.0** or higher
 * Node.js and npm installed for building the extension
 
 ---
