@@ -14,43 +14,12 @@
 // To-Do List   :
 //      * 2025/05/07 : (ToDo#00, seongbeom) None
 //-----------------------------------------------------
-
 import { TextDocument, WorkspaceConfiguration } from 'vscode';
 import * as os from 'os';
-import { commentTokenMap } from './commentTokenMap';
+import { getCommentTokenMap } from './commentTokenMap';
 
-/**
- * Returns the body lines for the header using provided parameters.
- */
-function getHeaderBodyLines(params: {
-  comment: string;
-  startYear: string;
-  endYear: string;
-  company: string;
-  projectName: string;
-  fileName: string;
-  author: string;
-  today: string;
-}): string[] {
-  const { comment, startYear, endYear, company, projectName, fileName, author, today } = params;
-  return [
-    `${comment}-----------------------------------------------------`,
-    `${comment} (C) Copyright ${startYear}-${endYear} ${company}`,
-    `${comment}`,
-    `${comment} All Rights Reserved`,
-    `${comment}`,
-    `${comment} Project Name : ${projectName}`,
-    `${comment} File Name    : ${fileName}`,
-    `${comment} Author       : ${author}`,
-    `${comment} Creation Date: ${today}`,
-    `${comment} Description  : `,
-    `${comment}`,
-    `${comment} File History :`,
-    `${comment}      * ${today} : (v01p00,  ${author}) First Release by '${author}'`,
-    `${comment} To-Do List   :`,
-    `${comment}      * ${today} : (ToDo#00, ${author}) None`,
-    `${comment}-----------------------------------------------------`
-  ];
+function interpolate(line: string, vars: Record<string, string>): string {
+  return line.replace(/\$\{(\w+)\}/g, (_, key) => vars[key] ?? '');
 }
 
 /**
@@ -61,24 +30,39 @@ export function createHeaderTemplate(
   config: WorkspaceConfiguration
 ): string {
   const langId = doc.languageId;
-  const shebangMap = config.get<{ [key: string]: string }>('shebangPerLanguage')!;
+  const commentMap = getCommentTokenMap();
+  const comment = commentMap[langId] || '#';
+  const shebangMap = config.get<Record<string, string>>('shebangPerLanguage', {});
   const shebang = shebangMap[langId] || '';
-  const author = os.userInfo().username;
-  const projectName = config.get<string>('projectName')!;
-  const company = config.get<string>('company')!;
-  const startYear = config.get<string>('copyrightStartYears')!;
+  const projectName = config.get<string>('projectName', '');
+  const company = config.get<string>('company', '');
+  const startYear = config.get<string>('copyrightStartYears', '');
   const endYear = new Date().getFullYear().toString();
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
-  const fileName = doc.fileName.split(/[/\\]/).pop()!;
-  const comment = commentTokenMap[langId] || '#';
+  const fileName = doc.fileName.split(/[/\\]/).pop() || '';
+  const author = os.userInfo().username;
+
+  // Fetch header body template lines from settings
+  const templateLines = config.get<string[]>('headerBodyTemplate', []);
+
+  // Build interpolation variables
+  const vars: Record<string, string> = {
+    comment,
+    projectName,
+    company,
+    startYear,
+    endYear,
+    today,
+    fileName,
+    author
+  };
 
   const lines: string[] = [];
   if (shebang) {
     lines.push(`#!${shebang}`);
   }
-  lines.push(
-    ...getHeaderBodyLines({ comment, startYear, endYear, company, projectName, fileName, author, today })
-  );
-
+  for (const tmpl of templateLines) {
+    lines.push(interpolate(tmpl, vars));
+  }
   return lines.join('\n') + '\n\n';
 }

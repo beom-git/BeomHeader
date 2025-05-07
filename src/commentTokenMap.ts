@@ -14,25 +14,13 @@
 // To-Do List   :
 //      * 2025/05/07 : (ToDo#00, seongbeom) None
 //-----------------------------------------------------
+import * as vscode from 'vscode';
 
-export const commentTokenMap: { [lang: string]: string } = {
-  python: '#',
-  shellscript: '#',
-  ruby: '#',
-  perl: '#',
-  lua: '--',
-  javascript: '//',
-  typescript: '//',
-  java: '//',
-  cpp: '//',
-  csharp: '//',
-  go: '//',
-  rust: '//',
-  php: '//',
-  swift: '//',
-  kotlin: '//',
-  verilog: '//',
-  systemverilog: '//',
-  tcl: '#',
-  upf: '#'
-};
+/**
+ * Retrieves the user-configured comment token map.
+ */
+export function getCommentTokenMap(): Record<string, string> {
+  return vscode.workspace
+    .getConfiguration('beomHeader')
+    .get<Record<string, string>>('commentTokenMap', {});
+}

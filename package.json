@@ -1,8 +1,8 @@
 {
   "name": "beom-header",
   "displayName": "Beom Header",
-  "description": "Insert standardized file headers (shebang, copyright, history…) for various file types",
-  "version": "1.1.4",
+  "description": "Insert standardized file headers for various file types",
+  "version": "1.2.0",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -25,13 +25,65 @@
     "onCommand:fileHeader.insertTodo"
   ],
   "main": "./out/extension.js",
+  "activationEvents": [
+    "onCommand:fileHeader.insert",
+    "onCommand:fileHeader.insertVersion",
+    "onCommand:fileHeader.insertTodo"
+  ],
+  "main": "./out/extension.js",
   "contributes": {
     "configuration": {
       "title": "Beom Header Settings",
       "properties": {
+        "beomHeader.commentTokenMap": {
+          "type": "object",
+          "description": "Map from language ID to comment token",
+          "default": {
+            "python": "#",
+            "shellscript": "#",
+            "ruby": "#",
+            "perl": "#",
+            "javascript": "//",
+            "typescript": "//",
+            "java": "//",
+            "c": "//",
+            "cpp": "//",
+            "verilog": "//",
+            "systemverilog": "//",
+            "tcl": "#",
+            "upf": "#"
+          }
+        },
+        "beomHeader.headerBodyTemplate": {
+          "type": "array",
+          "description": "Lines of the file header body with placeholders",
+          "items": { "type": "string" },
+          "default": [
+            "${comment}-----------------------------------------------------",
+            "${comment} (C) Copyright ${startYear}-${endYear} ${company}",
+            "${comment}",
+            "${comment} All Rights Reserved",
+            "${comment}",
+            "${comment} Project Name : ${projectName}",
+            "${comment} File Name    : ${fileName}",
+            "${comment} Author       : ${author}",
+            "${comment} Creation Date: ${today}",
+            "${comment} Description  : ",
+            "${comment}",
+            "${comment}     This file is part of the ${projectName} project.",
+            "${comment}        o ",
+            "${comment}",
+            "${comment}-----------------------------------------------------",
+            "${comment} File History :",
+            "${comment}      * ${today} : (v01p00,  ${author}) First Release by '${author}'",
+            "${comment} To-Do List   :",
+            "${comment}      * ${today} : (ToDo#00, ${author}) None",
+            "${comment}-----------------------------------------------------"
+          ]
+        },
         "beomHeader.shebangPerLanguage": {
           "type": "object",
-          "description": "Mapping of shebang per language",
+          "description": "Map from language ID to shebang line",
           "default": {
             "python": "/usr/bin/env python3",
             "bash": "/bin/bash"
@@ -42,38 +94,25 @@
           "description": "Project name",
           "default": "MyProject"
         },
-        "beomHeader.copyrightStartYears": {
-          "type": "string",
-          "description": "Copyright start year",
-          "default": "2023"
-        },
         "beomHeader.company": {
           "type": "string",
           "description": "Company name",
           "default": "YourCompany"
+        },
+        "beomHeader.copyrightStartYears": {
+          "type": "string",
+          "description": "Copyright start year",
+          "default": "2023"
         }
       }
     },
     "commands": [
-      {
-        "command": "fileHeader.insert",
-        "title": "Insert File Header"
-      },
-      {
-        "command": "fileHeader.insertVersion",
-        "title": "Insert Version Entry"
-      },
-      {
-        "command": "fileHeader.insertTodo",
-        "title": "Insert TODO Entry"
-      }
+      { "command": "fileHeader.insert", "title": "Insert File Header" },
+      { "command": "fileHeader.insertVersion", "title": "Insert Version Entry" },
+      { "command": "fileHeader.insertTodo", "title": "Insert TODO Entry" }
     ],
     "keybindings": [
-      {
-        "command": "fileHeader.insert",
-        "key": "ctrl+alt+h",
-        "when": "editorTextFocus"
-      }
+      { "command": "fileHeader.insert", "key": "ctrl+alt+h", "when": "editorTextFocus" }
     ]
   },
   "scripts": {
@@ -83,13 +122,9 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
     "typescript": "^4.9.5",
     "@vscode/test-electron": "^2.5.2",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.0.0"
-  },
-  "dependencies": {
-    "code": "^5.2.4",
-    "yo": "^5.1.0"
+    "@types/mocha": "^10.0.1"
   }
 }
