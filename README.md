@@ -1,69 +1,55 @@
 # Beom Header
 
-![Version](https://img.shields.io/badge/version-1.2.1-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-1.3.1-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-Insert standardized file headers (shebang, copyright, history…) for various file types in Visual Studio Code.
+Insert standardized file headers for various file types in Visual Studio Code, with customizable header templates, version and to-do entry templates.
 
 ---
 
 ## Features
 
-* **Insert File Header**: Generates and inserts a full file header with:
-
-  * Optional shebang (`#!...`) based on file language
-  * Copyright line with configurable start year and automatic end year
-  * Project name, file name, author, creation date, and description section
-  * File history entry and initial To-Do placeholder
-* **Insert Version Entry**: Appends a new version line to the File History section.
-* **Insert TODO Entry**: Appends a new To-Do line to the To-Do section.
+- **Insert File Header**: Generates and inserts a full file header based on a user‑configurable template.
+- **Insert Version Entry**: Appends a new version line to the File History section, auto‑incrementing major/patch numbers.
+- **Insert To-Do Entry**: Appends a new to‑do line to the To‑Do List section, auto‑incrementing the index.
+- **Fully Customizable** via the VS Code settings: comment tokens, header body, version entry template, to‑do template, shebang mappings, etc.
 
 ---
 
 ## Requirements
 
-* Visual Studio Code **1.80.0** or higher
-* Node.js and npm installed for building the extension
+- Visual Studio Code **1.80.0** or higher
+- Node.js and npm for building
 
 ---
 
 ## Installation
 
 1. Clone the repository:
-
    ```bash
    git clone https://github.com/beom-git/BeomHeader.git
    cd BeomHeader
    ```
 2. Install dependencies:
-
    ```bash
    npm install
    ```
-3. Compile TypeScript sources:
-
+3. Compile TypeScript:
    ```bash
    npm run compile
    ```
-4. Press `F5` in VS Code to launch the Extension Development Host.
-
-> Alternatively, install directly from the VS Code Marketplace (coming soon).
+4. Launch the extension host: Press `F5` in VS Code.
 
 ---
 
 ## Usage
 
-### Commands
+Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 
-Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run:
+- **Insert File Header** — `fileHeader.insert`
+- **Insert Version Entry** — `fileHeader.insertVersion`
+- **Insert TODO Entry** — `fileHeader.insertTodo`
 
-* `Insert File Header` — Inserts the complete header at the top of the active file.
-* `Insert Version Entry` — Inserts a new version entry under **File History**.
-* `Insert TODO Entry` — Inserts a new entry under **To-Do List**.
-
-### Keybindings
-
-By default, the following keybinding is provided:
-
+Default keybinding:
 ```json
 {
   "key": "ctrl+alt+h",
@@ -72,32 +58,39 @@ By default, the following keybinding is provided:
 }
 ```
 
-You can customize or add additional bindings in your VS Code `keybindings.json`.
-
 ---
 
 ## Configuration
 
-The extension contributes the following settings under **`Beom Header Settings`**:
+All settings live under **Beom Header Settings** in `settings.json`:
 
-| Setting                          | Type   | Default                                                     | Description                          |
-| -------------------------------- | ------ | ----------------------------------------------------------- | ------------------------------------ |
-| `beomHeader.shebangPerLanguage`  | object | `{ "python": "/usr/bin/env python3", "bash": "/bin/bash" }` | Map file language ID to shebang line |
-| `beomHeader.projectName`         | string | `MyProject`                                                 | Project name to display              |
-| `beomHeader.copyrightStartYears` | string | `2023`                                                      | Start year for copyright range       |
-| `beomHeader.company`             | string | `YourCompany`                                               | Company name for copyright           |
+| Setting                     | Type     | Default                                                                                                                                                                      | Description                                                                                   |
+| --------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `commentTokenMap`           | object   | `{ "python": "#", ..., "systemverilog": "//", "tcl": "#", "upf": "#" }`                                                                                       | Map from language ID to comment token                                                         |
+| `headerBodyTemplate`        | array    | Array of lines with placeholders: `${comment}`,`${startYear}`,`${endYear}`,`${company}`,`${projectName}`,`${fileName}`,`${author}`,`${today}`                              | Template for the main header body                                                             |
+| `versionEntryTemplate`      | string   | `${comment}      * ${today} : (v${major}p${patch},  ${author}) Description\n`                                                                                              | Template for a version entry; use `${major}`, `${patch}`                                      |
+| `todoEntryTemplate`         | string   | `${comment}      * ${today} : (ToDo#${index}, ${author}) Description\n`                                                                                                     | Template for a to‑do entry; use `${index}`                                                    |
+| `shebangPerLanguage`        | object   | `{ "python": "/usr/bin/env python3", "bash": "/bin/bash" }`                                                                                                           | Map from language ID to shebang line                                                          |
+| `projectName`               | string   | `MyProject`                                                                                                                                                                   | Project name for header                                                                       |
+| `company`                   | string   | `YourCompany`                                                                                                                                                                 | Company name for copyright                                                                   |
+| `copyrightStartYears`       | string   | `2023`                                                                                                                                                                        | Copyright start year                                                                         |
 
-Example in **`settings.json`**:
-
+**Example** override in `settings.json`:
 ```json
 {
-  "beomHeader.projectName": "MyProject",
-  "beomHeader.company": "YourCompany",
-  "beomHeader.shebangPerLanguage": {
-    "python": "/usr/bin/env python3",
-    "bash": "/usr/bin/env bash"
-  },
-  "beomHeader.copyrightStartYears": "2025"
+  "beomHeader.projectName": "Arm CSS N2 Case Story",
+  "beomHeader.company": "Supergate Inc.",
+  "beomHeader.headerBodyTemplate": [
+    "${comment}====== Custom Header ======",
+    "${comment} Project : ${projectName}",
+    "${comment}",
+    "${comment} Description :",
+    "${comment}------",
+    "${comment} File History :",
+    "${comment}      * ${today} : (v01p00, ${author}) Init"
+  ],
+  "beomHeader.versionEntryTemplate": "${comment} * ${today} : (v${major}p${patch}, ${author}) Updated\n",
+  "beomHeader.todoEntryTemplate": "${comment} * ${today} : (ToDo#${index}, ${author}) Action\n"
 }
 ```
 
@@ -105,52 +98,49 @@ Example in **`settings.json`**:
 
 ## Supported Languages
 
-Below is the list of languages supported by the `commentTokenMap` along with their comment tokens:
+| Language ID     | Comment Token |
+| --------------- | ------------- |
+| python          | `#`           |
+| shellscript     | `#`           |
+| ruby            | `#`           |
+| perl            | `#`           |
+| lua             | `--`          |
+| javascript      | `//`          |
+| typescript      | `//`          |
+| java            | `//`          |
+| c               | `//`          |
+| cpp             | `//`          |
+| verilog         | `//`          |
+| systemverilog   | `//`          |
+| tcl             | `#`           |
+| upf             | `#`           |
 
-| Language ID   | Comment Token |
-| ------------- | ------------- |
-| python        | `#`           |
-| shellscript   | `#`           |
-| ruby          | `#`           |
-| perl          | `#`           |
-| lua           | `--`          |
-| javascript    | `//`          |
-| typescript    | `//`          |
-| java          | `//`          |
-| c             | `//`          |
-| cpp           | `//`          |
-| csharp        | `//`          |
-| go            | `//`          |
-| rust          | `//`          |
-| php           | `//`          |
-| swift         | `//`          |
-| kotlin        | `//`          |
-| verilog       | `//`          |
-| systemverilog | `//`          |
-| tcl           | `#`           |
-| upf           | `#`           |
+---
 
 ## Extension Structure
 
-```
+```plaintext
 ├── src/
-│   ├── commentTokenMap.ts       # Language comment token definitions
-│   ├── headerTemplate.ts        # Header generation logic
-│   └── extension.ts             # Activation and command registration
-├── out/                          # Compiled JavaScript files
-├── package.json                  # Extension manifest
-├── tsconfig.json                 # TypeScript configuration
-└── README.md                     # This file
+│   ├── commentTokenMap.ts
+│   ├── headerTemplate.ts
+│   └── extension.ts
+├── images/
+│   └── icon.png
+├── out/
+│   └── (compiled .js files)
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
 ---
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to open an issue or pull request on GitHub.
+Contributions are welcome! Please open issues or pull requests on GitHub.
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

@@ -1,4 +1,4 @@
-//-----------------------------------------------------
+//----------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
@@ -9,11 +9,18 @@
 // Creation Date: 2025/05/07
 // Description  : 
 //
+//     This file is headerTemplate for the BeomHeader extension.
+//        o This file generates a standardized header string for insertion.
+//        o It uses the user-configured header template and comment token.
+//
+//----------------------------------------------------------------------
 // File History :
 //      * 2025/05/07 : (v01p00,  seongbeom) First Release by 'seongbeom'
 // To-Do List   :
 //      * 2025/05/07 : (ToDo#00, seongbeom) None
-//-----------------------------------------------------
+//----------------------------------------------------------------------
+
+
 import { TextDocument, WorkspaceConfiguration } from 'vscode';
 import * as os from 'os';
 import { getCommentTokenMap } from './commentTokenMap';

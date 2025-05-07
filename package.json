@@ -1,9 +1,8 @@
 {
   "name": "beom-header",
-  "icon": "images/icon.png",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "1.2.1",
+  "version": "1.3.1",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -20,12 +19,7 @@
     "url": "https://github.com/beom-git/BeomHeader/issues"
   },
   "homepage": "https://github.com/beom-git/BeomHeader#readme",
-  "activationEvents": [
-    "onCommand:fileHeader.insert",
-    "onCommand:fileHeader.insertVersion",
-    "onCommand:fileHeader.insertTodo"
-  ],
-  "main": "./out/extension.js",
+  "icon": "images/icon.png",
   "activationEvents": [
     "onCommand:fileHeader.insert",
     "onCommand:fileHeader.insertVersion",
@@ -44,6 +38,7 @@
             "shellscript": "#",
             "ruby": "#",
             "perl": "#",
+            "lua": "--",
             "javascript": "//",
             "typescript": "//",
             "java": "//",
@@ -60,7 +55,7 @@
           "description": "Lines of the file header body with placeholders",
           "items": { "type": "string" },
           "default": [
-            "${comment}-----------------------------------------------------",
+            "${comment}----------------------------------------------------------------------",
             "${comment} (C) Copyright ${startYear}-${endYear} ${company}",
             "${comment}",
             "${comment} All Rights Reserved",
@@ -74,13 +69,23 @@
             "${comment}     This file is part of the ${projectName} project.",
             "${comment}        o ",
             "${comment}",
-            "${comment}-----------------------------------------------------",
+            "${comment}----------------------------------------------------------------------",
             "${comment} File History :",
             "${comment}      * ${today} : (v01p00,  ${author}) First Release by '${author}'",
             "${comment} To-Do List   :",
             "${comment}      * ${today} : (ToDo#00, ${author}) None",
-            "${comment}-----------------------------------------------------"
+            "${comment}----------------------------------------------------------------------"
           ]
+        },
+        "beomHeader.versionEntryTemplate": {
+          "type": "string",
+          "description": "Template for a version entry; use ${comment}, ${today}, ${major}, ${patch}, ${author}",
+          "default": "${comment}      * ${today} : (v${major}p${patch},  ${author}) Description\n"
+        },
+        "beomHeader.todoEntryTemplate": {
+          "type": "string",
+          "description": "Template for a To-Do entry; use ${comment}, ${today}, ${index}, ${author}",
+          "default": "${comment}      * ${today} : (ToDo#${index}, ${author}) Description\n"
         },
         "beomHeader.shebangPerLanguage": {
           "type": "object",
