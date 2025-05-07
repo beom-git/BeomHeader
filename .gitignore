@@ -1,0 +1,41 @@
+# Node dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+build/
+
+# VS Code test output
+.vscode-test/
+
+# Packaged extension
+*.vsix
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor folders
+.vscode/
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+
+# Environment variables
+.env
+.env.local
+
+# Coverage reports
+coverage/
+
+# Lock files
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
