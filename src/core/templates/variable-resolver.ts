@@ -1,21 +1,26 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
 //
 // Project Name  : VS Code Extension
 // File Name     : variable-resolver.ts
-// Author        : seongbeom
+// Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Last Last Updated : 2025-09-08 04:00:39 (by root)
-// Editor       : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-09-08 05:07:50 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This file manages template variable resolution and interpolation.
-//        o Resolves all template variables from configuration and context
-//        o Provides template interpolation functionality
+//     This module provides core functionality for the VS Code Extension
+//        o Variable resolution and interpolation
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
+
 
 import * as vscode from 'vscode';
 import * as os from 'os';

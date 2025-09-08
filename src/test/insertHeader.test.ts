@@ -55,7 +55,7 @@ export const runInsertHeaderTests = async () => {
 		assert.ok(content.includes('To-Do List'), 'Header should contain todo list section');
 		
 		// Check if header contains some company name (default or configured)
-		const hasCompanyInfo = content.includes('YourCompany') || content.includes('supergate') || content.includes('Copyright');
+		const hasCompanyInfo = content.includes('YourCompany') || content.includes('Seongbeom') || content.includes('Copyright');
 		assert.ok(hasCompanyInfo, 'Header should contain some company/copyright information');
 		
 		console.log('✅ Test 2 passed: Header inserted successfully with correct content');

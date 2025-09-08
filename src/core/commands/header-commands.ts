@@ -1,22 +1,27 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
 //
 // Project Name  : VS Code Extension
 // File Name     : header-commands.ts
-// Author        : seongbeom
+// Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Last Last Last Last Updated : 2025-09-08 03:46:44 (by root)
-// Editor       : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This file contains commands for header insertion functionality.
+//     This module implements header insertion commands.
 //        o Insert file headers
 //        o Insert version entries
 //        o Insert todo entries
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
 
 import * as vscode from 'vscode';
 import * as os from 'os';

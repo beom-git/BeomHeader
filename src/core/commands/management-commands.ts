@@ -1,22 +1,27 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
 //
 // Project Name  : VS Code Extension
 // File Name     : management-commands.ts
-// Author        : seongbeom
+// Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This file contains management commands for the extension.
+//     This module defines management commands
 //        o Language mapping management
 //        o Toggle settings management
 //        o Extension state management
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
 
 import * as vscode from 'vscode';
 import { TemplateManager } from '../templates/template-manager';

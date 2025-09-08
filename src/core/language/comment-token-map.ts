@@ -1,14 +1,14 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
 //
-// Project Name  : VS Code Extension
+// Project Name  : TCL
 // File Name     : comment-token-map.ts
-// Author        : seongbeom
-// First Created : 2025/05/07
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Author        : Seongbeom (lub8881@kakao.com)
+// First Created : 2025/09/08
+// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file provides mapping from file extensions to comment tokens.
@@ -16,7 +16,13 @@
 //        o Supports single-line and multi-line comments
 //        o Handles special cases for different languages
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
+
 
 import * as vscode from 'vscode';
 import { CommentTokenMap, CommentToken } from '../../types/template.types';

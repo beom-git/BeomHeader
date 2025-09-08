@@ -1,22 +1,27 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
 //
 // Project Name  : VS Code Extension
 // File Name     : auto-updater.ts
-// Author        : seongbeom
+// Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Last Updated : 2025-09-08 04:00:39 (by root)
-// Editor       : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This file manages automatic header updates on file save.
+//     This module provides auto-update functionality for file headers
 //        o Updates Last Modified timestamp
 //        o Updates Editor information
 //        o Configurable update strategies
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
 
 import * as vscode from 'vscode';
 import { getCommentToken } from '../language/comment-token-map';
@@ -34,7 +39,7 @@ class LastModifiedUpdateStrategy implements UpdateStrategy {
   pattern = /^(.*?)(?:\s*(?:Last\s+)*(?:Last\s+)?Updated\s*:\s*.*|Updated\s*:\s*.*)$/;
 
   canUpdate(line: string): boolean {
-    // Check if line contains "Last Updated : 2025-09-08 04:00:39 (by root)
+    // Check if line contains " Last Updated  : 2025-09-08 04:46:24 (by root)
     return /Updated\s*:\s*/.test(line);
   }
 
@@ -70,7 +75,7 @@ class EditorInfoUpdateStrategy implements UpdateStrategy {
 
   updateLine(line: string, variables: Record<string, string>): string {
     const editorInfo = variables['editorInfo'] || 'Visual Studio Code, space size (4)';
-    return line.replace(this.pattern, (_, prefix) => `${prefix}Editor       : ${editorInfo}`);
+    return line.replace(this.pattern, (_, prefix) => `${prefix}Editor        : ${editorInfo}`);
   }
 }
 
@@ -154,10 +159,19 @@ export class AutoUpdater {
     const lines = text.split(/\r?\n/);
     const variables = this.buildVariables(document);
     
+    // Find header boundaries
+    const headerBounds = this.findHeaderBounds(lines);
+    if (!headerBounds) {
+      console.log('🚫 No header found in document, skipping auto-update');
+      return;
+    }
+    
+    console.log(`📋 Header found: lines ${headerBounds.start + 1} to ${headerBounds.end + 1}`);
+    
     let hasUpdates = false;
     
-    // Process first 50 lines only (header area)
-    for (let i = 0; i < Math.min(50, lines.length); i++) {
+    // Process only within header boundaries
+    for (let i = headerBounds.start; i <= headerBounds.end; i++) {
       for (const strategy of this.strategies) {
         if (strategy.canUpdate(lines[i])) {
           // Check if this update type is enabled
@@ -170,6 +184,7 @@ export class AutoUpdater {
           if (lines[i] !== newLine) {
             lines[i] = newLine;
             hasUpdates = true;
+            console.log(`🔄 Updated line ${i + 1}: ${strategy.name}`);
           }
         }
       }
@@ -181,6 +196,45 @@ export class AutoUpdater {
       edit.replace(document.uri, fullRange, lines.join('\n'));
       await vscode.workspace.applyEdit(edit);
     }
+  }
+
+  /**
+   * Find header boundaries by looking for separator lines
+   */
+  private findHeaderBounds(lines: string[]): { start: number; end: number } | null {
+    let headerStart = -1;
+    let headerEnd = -1;
+    
+    // Look for header separator patterns
+    const separatorPattern = /^[\/\*#%\-\+\=]{4,}[\-\+\=\s]*$/;
+    
+    // Find first separator (header start)
+    for (let i = 0; i < Math.min(10, lines.length); i++) {
+      const line = lines[i].trim();
+      if (separatorPattern.test(line)) {
+        headerStart = i;
+        break;
+      }
+    }
+    
+    if (headerStart === -1) {
+      return null; // No header found
+    }
+    
+    // Find second separator (header end) - look within reasonable range
+    for (let i = headerStart + 1; i < Math.min(headerStart + 50, lines.length); i++) {
+      const line = lines[i].trim();
+      if (separatorPattern.test(line)) {
+        headerEnd = i;
+        break;
+      }
+    }
+    
+    if (headerEnd === -1) {
+      return null; // No complete header found
+    }
+    
+    return { start: headerStart, end: headerEnd };
   }
 
   /**

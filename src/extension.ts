@@ -1,3 +1,26 @@
+//--------------------------------------------------------------------
+// (C) Copyright 2023-2025 Seongbeom
+//
+// All Rights Reserved
+//
+// Project Name  : TCL
+// File Name     : extension.ts
+// Author        : Seongbeom (lub8881@kakao.com)
+// First Created : 2025/09/08
+// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Editor        : Visual Studio Code, tab size (4)
+// Description   : 
+//
+//     This module provides core functionality for the TCL application
+//        o 
+//
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
+
 import * as vscode from 'vscode';
 import { HeaderCommands } from './core/commands/header-commands';
 import { ConfigCommands } from './core/commands/config-commands';

@@ -1,22 +1,25 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
 //
 // Project Name  : VS Code Extension
 // File Name     : template-manager.ts
-// Author        : seongbeom
+// Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Last Updated : 2025-09-08 04:28:04 (by root)
-// Editor       : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This file manages template loading and selection for the BeomHeader extension.
-//        o Loads templates from JSON files in the assets/templates directory
-//        o Provides template selection based on user configuration
-//        o Handles fallback to default templates
+//     This module provides core functionality for the VS Code Extension
+//        o Template management
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//--------------------------------------------------------------------
 
 import * as vscode from 'vscode';
 import * as path from 'path';
