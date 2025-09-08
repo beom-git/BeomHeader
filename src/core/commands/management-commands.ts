@@ -7,7 +7,7 @@
 // File Name     : management-commands.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Last Updated  : 2025-09-08 05:24:04 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -214,7 +214,7 @@ export class ManagementCommands {
    */
   private async toggleAutoUpdateLastModified(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('autoUpdateLastModified', true);
+    const currentValue = config.get<boolean>('beomHeader.autoUpdateLastModified', true);
     
     await config.update('autoUpdateLastModified', !currentValue, vscode.ConfigurationTarget.Global);
     
@@ -230,7 +230,7 @@ export class ManagementCommands {
    */
   private async toggleAutoUpdateEditor(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('autoUpdateEditor', true);
+    const currentValue = config.get<boolean>('beomHeader.autoUpdateEditor', true);
     
     await config.update('autoUpdateEditor', !currentValue, vscode.ConfigurationTarget.Global);
     
@@ -246,9 +246,9 @@ export class ManagementCommands {
    */
   private async toggleLicenseHeader(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('includeLicenseHeader', true);
+    const currentValue = config.get<boolean>('beomHeader.includeLicenseHeader', true);
     
-    await config.update('includeLicenseHeader', !currentValue, vscode.ConfigurationTarget.Global);
+    await config.update('beomHeader.includeLicenseHeader', !currentValue, vscode.ConfigurationTarget.Global);
     
     const message = !currentValue 
       ? 'License header will now be included in file headers'
@@ -262,9 +262,9 @@ export class ManagementCommands {
    */
   private async toggleAutoIncrementVersion(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('autoIncrementVersion', true);
+    const currentValue = config.get<boolean>('beomHeader.autoIncrementVersion', true);
     
-    await config.update('autoIncrementVersion', !currentValue, vscode.ConfigurationTarget.Global);
+    await config.update('beomHeader.autoIncrementVersion', !currentValue, vscode.ConfigurationTarget.Global);
     
     const message = !currentValue 
       ? 'Auto increment version is now enabled'

@@ -7,7 +7,7 @@
 // File Name     : template-manager.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Last Updated  : 2025-09-08 05:24:04 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -152,7 +152,7 @@ export class TemplateManager {
         "${comment}",
         "${comment} Project Name  : ${projectName}",
         "${comment} File Name     : ${fileName}",
-        "${comment} Author        : ${author}",
+        "${comment} Author        : ${authorWithTitle}",
         "${comment} First Created : ${today}",
         "${comment} Last Updated  : ${lastModifiedDate} (by ${lastModifiedUser})",
         "${comment} Editor        : ${editorInfo}",
@@ -190,7 +190,7 @@ export class TemplateManager {
         "${comment} Project Name  : ${projectName}",
         "${comment} File Name     : ${fileName}",
         "${comment} Full Path     : ${fullPath}",
-        "${comment} Author        : ${authorName}",
+        "${comment} Author        : ${authorWithTitle}",
         "${comment} Team          : ${teamName}",
         "${comment} First Created : ${today}",
         "${comment} Last Updated  : ${lastModifiedDate} (by ${lastModifiedUser})",
@@ -234,7 +234,7 @@ export class TemplateManager {
    * Get header body template based on user configuration
    */
   public getHeaderBodyTemplate(config: vscode.WorkspaceConfiguration): string[] {
-    const headerStyle = config.get<HeaderStyle>('headerStyle', 'standard');
+    const headerStyle = config.get<HeaderStyle>('beomHeader.headerStyle', 'standard');
     console.log('📋 getHeaderBodyTemplate: Requested style:', headerStyle);
     console.log('📋 Available template styles:', Object.keys(this.headerTemplates));
     
@@ -253,7 +253,7 @@ export class TemplateManager {
    * Get version entry template based on user configuration
    */
   public getVersionEntryTemplate(config: vscode.WorkspaceConfiguration): string {
-    const headerStyle = config.get<HeaderStyle>('headerStyle', 'standard');
+    const headerStyle = config.get<HeaderStyle>('beomHeader.headerStyle', 'standard');
     return this.versionTemplates[headerStyle] || this.versionTemplates.standard || "";
   }
 
@@ -261,7 +261,7 @@ export class TemplateManager {
    * Get todo entry template based on user configuration
    */
   public getTodoEntryTemplate(config: vscode.WorkspaceConfiguration): string {
-    const headerStyle = config.get<HeaderStyle>('headerStyle', 'standard');
+    const headerStyle = config.get<HeaderStyle>('beomHeader.headerStyle', 'standard');
     return this.todoTemplates[headerStyle] || this.todoTemplates.standard || "";
   }
 

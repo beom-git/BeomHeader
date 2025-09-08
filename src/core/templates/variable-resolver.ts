@@ -5,29 +5,28 @@
 //
 // Project Name  : VS Code Extension
 // File Name     : variable-resolver.ts
-// Author        : Seongbeom (lub8881@kakao.com)
+// Author        : seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:07:50 (by root)
+// Last Updated  : 2025-09-08 05:58:53 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This module provides core functionality for the VS Code Extension
-//        o Variable resolution and interpolation
+//     This module provides core functionality for the VS Code Extension application
+//        o 
 //
 //--------------------------------------------------------------------
 // File History :
-//      * 2025/09/08 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
+//      * 2025/09/08 : (v01p00,  seongbeom) First Release by 'seongbeom'
 // To-Do List   :
-//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//      * 2025/09/08 : (ToDo#00, seongbeom) None
 //--------------------------------------------------------------------
-
 
 import * as vscode from 'vscode';
 import * as os from 'os';
 import * as path from 'path';
-import { TemplateVariables, TemplateContext } from '../../types/template.types';
+import { getCommentToken } from '../language/comment-token-map';
+import { TemplateVariables } from '../../types/template.types';
 import { AuthorInfo, EditorConfig, FileInfo } from '../../types/common.types';
-import { BeomHeaderConfig } from '../../types/config.types';
 import { getTodayFormatted, getCurrentTimestamp, getCurrentYear } from '../../utils/date-utils';
 import { interpolateTemplate, generateSeparator } from '../../utils/string-utils';
 
@@ -48,7 +47,7 @@ export class VariableResolver {
     const editorConfig = this.getEditorConfig(document);
     const licenseInfo = this.getLicenseInfo(config);
     
-    const startYear = config.get<string>('copyrightStartYears', '');
+    const startYear = config.get<string>('beomHeader.copyrightStartYears', '');
     const endYear = getCurrentYear();
     const today = getTodayFormatted();
     const lastModifiedDate = getCurrentTimestamp();
@@ -58,13 +57,13 @@ export class VariableResolver {
     
     const variables: TemplateVariables = {
       // Basic tokens
-      comment: this.getCommentToken(document.languageId, config),
-      separator: separator.substring(this.getCommentToken(document.languageId, config).length),
+      comment: getCommentToken(document.languageId).single || '//',
+      separator: separator.substring((getCommentToken(document.languageId).single || '//').length),
       
       // Project information
-      projectName: config.get<string>('projectName', ''),
+      projectName: config.get<string>('beomHeader.projectName', ''),
       projectDescription: this.getProjectDescription(config),
-      company: config.get<string>('company', ''),
+      companyName: config.get<string>('beomHeader.companyName', ''),
       
       // File information
       fileName: fileInfo.name,
@@ -78,7 +77,8 @@ export class VariableResolver {
       authorEmail: authorInfo.email,
       authorFullName: authorInfo.fullName,
       authorTitle: authorInfo.title,
-      teamName: config.get<string>('teamName', ''),
+      authorWithTitle: this.formatAuthorWithTitle(authorInfo),
+      teamName: config.get<string>('beomHeader.teamName', ''),
       
       // Date and time
       today,
@@ -92,7 +92,7 @@ export class VariableResolver {
       // Required core fields
       creationDate: today,
       description: this.getProjectDescription(config),
-      copyright: this.getCopyrightNotice(config, { startYear, endYear, company: config.get<string>('company', ''), author: authorInfo.name }),
+      copyright: this.getCopyrightNotice(config, { startYear, endYear, companyName: config.get<string>('beomHeader.companyName', ''), author: authorInfo.name }),
       fileHistory: '',
       todoList: '',
       authorWithEmail: this.formatAuthorWithEmail(authorInfo),
@@ -101,7 +101,7 @@ export class VariableResolver {
       editorInfo: this.formatEditorInfo(editorConfig),
       
       // Legal information
-      copyrightNotice: this.getCopyrightNotice(config, { startYear, endYear, company: config.get<string>('company', ''), author: authorInfo.name }),
+      copyrightNotice: this.getCopyrightNotice(config, { startYear, endYear, companyName: config.get<string>('beomHeader.companyName', ''), author: authorInfo.name }),
       licenseText: licenseInfo.text,
       licenseType: licenseInfo.type,
       licenseUrl: licenseInfo.url,
@@ -139,9 +139,9 @@ export class VariableResolver {
    * Get author information from configuration
    */
   private getAuthorInfo(config: vscode.WorkspaceConfiguration): AuthorInfo {
-    const authorFullName = config.get<string>('authorFullName', '');
-    const authorEmail = config.get<string>('authorEmail', '');
-    const authorTitle = config.get<string>('authorTitle', '');
+    const authorFullName = config.get<string>('beomHeader.authorFullName', '');
+    const authorEmail = config.get<string>('beomHeader.authorEmail', '');
+    const authorTitle = config.get<string>('beomHeader.authorTitle', '');
     const systemUsername = os.userInfo().username;
     
     return {
@@ -177,9 +177,9 @@ export class VariableResolver {
    * Get license information
    */
   private getLicenseInfo(config: vscode.WorkspaceConfiguration): { text: string; type: string; url: string } {
-    const licenseType = config.get<string>('licenseType', 'All Rights Reserved');
-    const customLicenseText = config.get<string>('customLicenseText', '');
-    const licenseUrl = config.get<string>('licenseUrl', '');
+    const licenseType = config.get<string>('beomHeader.licenseType', 'All Rights Reserved');
+    const customLicenseText = config.get<string>('beomHeader.customLicenseText', '');
+    const licenseUrl = config.get<string>('beomHeader.licenseUrl', '');
     
     const licenseTexts: Record<string, string> = {
       'All Rights Reserved': 'All Rights Reserved',
@@ -204,19 +204,11 @@ export class VariableResolver {
   }
 
   /**
-   * Get comment token for language
-   */
-  private getCommentToken(languageId: string, config: vscode.WorkspaceConfiguration): string {
-    const commentMap = config.get<Record<string, string>>('commentTokenMap', {});
-    return commentMap[languageId] || '#';
-  }
-
-  /**
    * Generate separator line
    */
   private generateSeparator(config: vscode.WorkspaceConfiguration): string {
-    const separatorLength = config.get<number>('separatorLength', 70);
-    const separatorChar = config.get<string>('separatorChar', '-');
+    const separatorLength = config.get<number>('beomHeader.separatorLength', 70);
+    const separatorChar = config.get<string>('beomHeader.separatorChar', '-');
     
     return generateSeparator(separatorChar, separatorLength);
   }
@@ -238,13 +230,6 @@ export class VariableResolver {
   }
 
   /**
-   * Format author name (legacy method - now just returns name)
-   */
-  private formatAuthorName(authorInfo: AuthorInfo): string {
-    return authorInfo.name;
-  }
-
-  /**
    * Format editor information
    */
   private formatEditorInfo(editorConfig: EditorConfig): string {
@@ -256,8 +241,8 @@ export class VariableResolver {
    * Get project description with variable interpolation
    */
   private getProjectDescription(config: vscode.WorkspaceConfiguration): string {
-    const template = config.get<string>('projectDescription', 'This module provides core functionality for the ${projectName} application');
-    const projectName = config.get<string>('projectName', '');
+    const template = config.get<string>('beomHeader.projectDescription', 'This module provides core functionality for the ${projectName} application');
+    const projectName = config.get<string>('beomHeader.projectName', '');
     return interpolateTemplate(template, { projectName });
   }
 
@@ -265,7 +250,26 @@ export class VariableResolver {
    * Get copyright notice with variable interpolation
    */
   private getCopyrightNotice(config: vscode.WorkspaceConfiguration, vars: Record<string, string>): string {
-    const template = config.get<string>('copyrightNotice', '(C) Copyright ${startYear}-${endYear} ${company}');
+    const template = config.get<string>('beomHeader.copyrightNotice', '(C) Copyright ${startYear}-${endYear} ${companyName}');
     return interpolateTemplate(template, vars);
+  }
+
+  /**
+   * Format author with title using hyphen separation
+   */
+  private formatAuthorWithTitle(authorInfo: AuthorInfo): string {
+    if (authorInfo.title && authorInfo.title.trim()) {
+      if (authorInfo.email && authorInfo.email.trim()) {
+        return `${authorInfo.name} - ${authorInfo.title} <${authorInfo.email}>`;
+      } else {
+        return `${authorInfo.name} - ${authorInfo.title}`;
+      }
+    } else {
+      if (authorInfo.email && authorInfo.email.trim()) {
+        return `${authorInfo.name} <${authorInfo.email}>`;
+      } else {
+        return authorInfo.name;
+      }
+    }
   }
 }

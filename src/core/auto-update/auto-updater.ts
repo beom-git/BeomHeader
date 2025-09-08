@@ -7,7 +7,7 @@
 // File Name     : auto-updater.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Last Updated  : 2025-09-08 05:24:04 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -150,8 +150,8 @@ export class AutoUpdater {
    */
   private async updateDocument(document: vscode.TextDocument): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const autoUpdateLastModified = config.get<boolean>('autoUpdateLastModified', true);
-    const autoUpdateEditor = config.get<boolean>('autoUpdateEditor', true);
+    const autoUpdateLastModified = config.get<boolean>('beomHeader.autoUpdateLastModified', true);
+    const autoUpdateEditor = config.get<boolean>('beomHeader.autoUpdateEditor', true);
     
     if (!autoUpdateLastModified && !autoUpdateEditor) return;
 

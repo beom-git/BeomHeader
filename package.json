@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.0.5",
+  "version": "3.1.0",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -24,11 +24,189 @@
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Beom Header Settings",
+      "title": "Beom Header",
       "properties": {
+        "beomHeader.projectName": {
+          "type": "string",
+          "description": "Name of your project",
+          "default": "MyProject"
+        },
+        "beomHeader.projectDescription": {
+          "type": "string",
+          "description": "Project description template (use ${projectName} for substitution)",
+          "default": "This module provides core functionality for the ${projectName} application"
+        },
+        "beomHeader.companyName": {
+          "type": "string",
+          "description": "Your company or organization name",
+          "default": "YourCompany"
+        },
+        "beomHeader.teamName": {
+          "type": "string",
+          "description": "Team or department name (optional)",
+          "default": ""
+        },
+        "beomHeader.authorEmail": {
+          "type": "string",
+          "description": "Author's email address",
+          "default": "<username>@example.com"
+        },
+        "beomHeader.authorFullName": {
+          "type": "string",
+          "description": "Author's full name (if different from system username)",
+          "default": ""
+        },
+        "beomHeader.authorTitle": {
+          "type": "string",
+          "description": "Author's job title or role (e.g., Senior Developer)",
+          "default": ""
+        },
+        "beomHeader.copyrightStartYears": {
+          "type": "string",
+          "description": "Copyright start year for your project",
+          "default": "2023"
+        },
+        "beomHeader.copyrightNotice": {
+          "type": "string",
+          "description": "Copyright notice format (use ${startYear}, ${endYear}, ${company})",
+          "default": "(C) Copyright ${startYear}-${endYear} ${company}"
+        },
+        "beomHeader.licenseType": {
+          "type": "string",
+          "description": "License type for your project",
+          "enum": [
+            "All Rights Reserved",
+            "MIT",
+            "Apache-2.0",
+            "GPL-3.0",
+            "GPL-2.0",
+            "LGPL-3.0",
+            "LGPL-2.1",
+            "BSD-3-Clause",
+            "BSD-2-Clause",
+            "ISC",
+            "MPL-2.0",
+            "Unlicense",
+            "Custom"
+          ],
+          "default": "All Rights Reserved"
+        },
+        "beomHeader.customLicenseText": {
+          "type": "string",
+          "description": "Custom license text (only used when License Type is 'Custom')",
+          "default": ""
+        },
+        "beomHeader.licenseUrl": {
+          "type": "string",
+          "description": "URL to the full license text (optional)",
+          "default": ""
+        },
+        "beomHeader.includeLicenseHeader": {
+          "type": "boolean",
+          "description": "Include license information in file headers",
+          "default": true
+        },
+        "beomHeader.headerStyle": {
+          "type": "string",
+          "description": "Header template style",
+          "enum": ["standard", "minimal", "detailed", "custom"],
+          "default": "standard"
+        },
+        "beomHeader.separatorLength": {
+          "type": "number",
+          "description": "Length of header separator lines",
+          "default": 70,
+          "minimum": 10,
+          "maximum": 200
+        },
+        "beomHeader.separatorChar": {
+          "type": "string",
+          "description": "Character used for header separator lines",
+          "enum": ["-", "=", "*", "#", "~", "+", "_"],
+          "default": "-"
+        },
+        "beomHeader.includeEmptyLines": {
+          "type": "boolean",
+          "description": "Add empty comment lines for better header readability",
+          "default": true
+        },
+        "beomHeader.versionFormat": {
+          "type": "string",
+          "description": "Version number format style",
+          "enum": [
+            "v{major:02d}p{patch:02d}",
+            "v{major}.{minor}.{patch}",
+            "{major}.{minor}.{patch}",
+            "v{major}.{patch}",
+            "{major}.{patch}",
+            "custom"
+          ],
+          "default": "v{major:02d}p{patch:02d}"
+        },
+        "beomHeader.customVersionFormat": {
+          "type": "string",
+          "description": "Custom version format (only used when Version Format is 'custom')",
+          "default": "v{major:02d}p{patch:02d}"
+        },
+        "beomHeader.autoIncrementVersion": {
+          "type": "boolean",
+          "description": "Automatically increment version numbers when adding entries",
+          "default": true
+        },
+        "beomHeader.includeMinorVersion": {
+          "type": "boolean",
+          "description": "Include minor version number in version format",
+          "default": false
+        },
+        "beomHeader.showFullPath": {
+          "type": "boolean",
+          "description": "Show full file path instead of just filename",
+          "default": false
+        },
+        "beomHeader.showRelativePath": {
+          "type": "boolean",
+          "description": "Show relative path from workspace root",
+          "default": false
+        },
+        "beomHeader.pathSeparator": {
+          "type": "string",
+          "description": "Path separator character for file paths",
+          "default": "/"
+        },
+        "beomHeader.autoUpdateLastModified": {
+          "type": "boolean",
+          "description": "Auto-update 'Last Modified' timestamp when saving files",
+          "default": true
+        },
+        "beomHeader.autoUpdateEditor": {
+          "type": "boolean",
+          "description": "Auto-update editor information when saving files",
+          "default": true
+        },
+        "beomHeader.enableConfigChangeNotifications": {
+          "type": "boolean",
+          "description": "Show notifications when configuration changes and suggest header updates",
+          "default": false
+        },
+        "beomHeader.excludePatterns": {
+          "type": "array",
+          "description": "File patterns to exclude from bulk header updates",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/out/**",
+            "**/build/**",
+            "**/dist/**",
+            "**/.git/**",
+            "**/.vscode/**",
+            "**/.*"
+          ]
+        },
         "beomHeader.commentTokenMap": {
           "type": "object",
-          "description": "Map from language ID to comment token",
+          "description": "Comment tokens for different programming languages",
           "default": {
             "python": "#",
             "shellscript": "#",
@@ -82,168 +260,78 @@
         },
         "beomHeader.shebangPerLanguage": {
           "type": "object",
-          "description": "Map from language ID to shebang line",
+          "description": "Shebang lines for script languages",
           "default": {
             "python": "/usr/bin/env python3",
             "bash": "/bin/bash"
           }
         },
-        "beomHeader.projectName": {
-          "type": "string",
-          "description": "Project name",
-          "default": "MyProject"
-        },
-        "beomHeader.projectDescription": {
-          "type": "string",
-          "description": "Project description template for header",
-          "default": "This module provides core functionality for the ${projectName} application"
-        },
-        "beomHeader.company": {
-          "type": "string",
-          "description": "Company name",
-          "default": "YourCompany"
-        },
-        "beomHeader.copyrightStartYears": {
-          "type": "string",
-          "description": "Copyright start year",
-          "default": "2023"
-        },
-        "beomHeader.showFullPath": {
-          "type": "boolean",
-          "description": "Show full file path instead of just filename",
-          "default": false
-        },
-        "beomHeader.showRelativePath": {
-          "type": "boolean",
-          "description": "Show relative path from workspace root",
-          "default": false
-        },
-        "beomHeader.pathSeparator": {
-          "type": "string",
-          "description": "Path separator character to use in file paths",
-          "default": "/"
-        },
-        "beomHeader.licenseType": {
-          "type": "string",
-          "description": "License type for the project",
-          "enum": [
-            "All Rights Reserved",
-            "MIT",
-            "Apache-2.0",
-            "GPL-3.0",
-            "GPL-2.0",
-            "LGPL-3.0",
-            "LGPL-2.1",
-            "BSD-3-Clause",
-            "BSD-2-Clause",
-            "ISC",
-            "MPL-2.0",
-            "Unlicense",
-            "Custom"
-          ],
-          "default": "All Rights Reserved"
-        },
-        "beomHeader.customLicenseText": {
-          "type": "string",
-          "description": "Custom license text (used when licenseType is 'Custom')",
-          "default": ""
-        },
-        "beomHeader.includeLicenseHeader": {
-          "type": "boolean",
-          "description": "Include license information in header",
-          "default": true
-        },
-        "beomHeader.licenseUrl": {
-          "type": "string",
-          "description": "URL to the license text (optional)",
-          "default": ""
-        },
-        "beomHeader.copyrightNotice": {
-          "type": "string",
-          "description": "Copyright notice format template",
-          "default": "(C) Copyright ${startYear}-${endYear} ${company}"
-        },
-        "beomHeader.versionFormat": {
-          "type": "string",
-          "description": "Version format template (use {major}, {patch}, {minor})",
-          "enum": [
-            "v{major:02d}p{patch:02d}",
-            "v{major}.{minor}.{patch}",
-            "{major}.{minor}.{patch}",
-            "v{major}.{patch}",
-            "{major}.{patch}",
-            "custom"
-          ],
-          "default": "v{major:02d}p{patch:02d}"
-        },
-        "beomHeader.customVersionFormat": {
-          "type": "string",
-          "description": "Custom version format (used when versionFormat is 'custom')",
-          "default": "v{major:02d}p{patch:02d}"
-        },
-        "beomHeader.autoIncrementVersion": {
-          "type": "boolean",
-          "description": "Automatically increment version numbers",
-          "default": true
-        },
-        "beomHeader.includeMinorVersion": {
-          "type": "boolean",
-          "description": "Include minor version number in version format",
-          "default": false
-        },
-        "beomHeader.authorEmail": {
-          "type": "string",
-          "description": "Author email address",
-          "default": ""
-        },
-        "beomHeader.authorFullName": {
-          "type": "string",
-          "description": "Author full name (if different from username)",
-          "default": ""
-        },
-        "beomHeader.authorTitle": {
-          "type": "string",
-          "description": "Author title or role",
-          "default": ""
-        },
-        "beomHeader.teamName": {
-          "type": "string",
-          "description": "Team or department name",
-          "default": ""
-        },
-        "beomHeader.separatorLength": {
-          "type": "number",
-          "description": "Length of separator lines",
-          "default": 70,
-          "minimum": 10,
-          "maximum": 200
-        },
-        "beomHeader.separatorChar": {
-          "type": "string",
-          "description": "Character used for separator lines",
-          "enum": ["-", "=", "*", "#", "~", "+", "_"],
-          "default": "-"
-        },
-        "beomHeader.headerStyle": {
-          "type": "string",
-          "description": "Overall header style",
-          "enum": ["standard", "minimal", "detailed", "custom"],
-          "default": "standard"
-        },
-        "beomHeader.includeEmptyLines": {
-          "type": "boolean",
-          "description": "Include empty comment lines for better readability",
-          "default": true
-        },
-        "beomHeader.autoUpdateLastModified": {
-          "type": "boolean",
-          "description": "Automatically update Last Modified timestamp when saving files",
-          "default": true
-        },
-        "beomHeader.autoUpdateEditor": {
-          "type": "boolean",
-          "description": "Automatically update Editor information when saving files",
-          "default": true
+        "beomHeader.languageExtensions": {
+          "type": "object",
+          "description": "Custom language ID to file extensions mapping (overrides defaults)",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "typescript": [".ts", ".tsx"],
+            "javascript": [".js", ".jsx", ".mjs", ".cjs"],
+            "typescriptreact": [".tsx"],
+            "javascriptreact": [".jsx"],
+            "python": [".py", ".pyw", ".pyi"],
+            "java": [".java"],
+            "c": [".c", ".h"],
+            "cpp": [".cpp", ".cc", ".cxx", ".c++", ".hpp", ".hh", ".hxx", ".h++"],
+            "csharp": [".cs"],
+            "go": [".go"],
+            "rust": [".rs"],
+            "swift": [".swift"],
+            "kotlin": [".kt", ".kts"],
+            "scala": [".scala", ".sc"],
+            "ruby": [".rb", ".rbw"],
+            "perl": [".pl", ".pm", ".t"],
+            "shell": [".sh"],
+            "shellscript": [".sh", ".bash", ".zsh", ".fish"],
+            "bash": [".bash", ".sh"],
+            "powershell": [".ps1", ".psm1", ".psd1"],
+            "r": [".r", ".R"],
+            "html": [".html", ".htm", ".xhtml"],
+            "xml": [".xml", ".xsd", ".xsl", ".xslt"],
+            "css": [".css"],
+            "scss": [".scss"],
+            "sass": [".sass"],
+            "less": [".less"],
+            "stylus": [".styl"],
+            "haskell": [".hs", ".lhs"],
+            "ocaml": [".ml", ".mli"],
+            "fsharp": [".fs", ".fsi", ".fsx"],
+            "clojure": [".clj", ".cljs", ".cljc"],
+            "lisp": [".lisp", ".lsp"],
+            "sql": [".sql", ".pgsql", ".mysql"],
+            "markdown": [".md", ".markdown", ".mdown", ".mkd"],
+            "tex": [".tex", ".latex"],
+            "yaml": [".yml", ".yaml"],
+            "toml": [".toml"],
+            "ini": [".ini", ".cfg", ".conf"],
+            "vim": [".vim", ".vimrc"],
+            "lua": [".lua"],
+            "matlab": [".m"],
+            "julia": [".jl"],
+            "dart": [".dart"],
+            "php": [".php", ".phtml", ".php3", ".php4", ".php5"],
+            "elixir": [".ex", ".exs"],
+            "erlang": [".erl", ".hrl"],
+            "assembly": [".asm", ".s", ".S"],
+            "makefile": ["Makefile", "makefile", ".mk"],
+            "dockerfile": ["Dockerfile", ".dockerfile"],
+            "json": [".json", ".jsonc"],
+            "jsonc": [".jsonc"],
+            "properties": [".properties"],
+            "gitignore": [".gitignore"],
+            "ignore": [".ignore", ".eslintignore", ".prettierignore"]
+          }
         }
       }
     },
@@ -254,6 +342,9 @@
       { "command": "fileHeader.addLanguageMapping", "title": "Add Language Comment Token Mapping" },
       { "command": "fileHeader.removeLanguageMapping", "title": "Remove Language Comment Token Mapping" },
       { "command": "fileHeader.listLanguageMappings", "title": "List All Language Comment Token Mappings" },
+      { "command": "fileHeader.addLanguageExtensionMapping", "title": "Add Language Extension Mapping" },
+      { "command": "fileHeader.removeLanguageExtensionMapping", "title": "Remove Language Extension Mapping" },
+      { "command": "fileHeader.listLanguageExtensionMappings", "title": "List All Language Extension Mappings" },
       { "command": "fileHeader.configureFilePath", "title": "Configure File Path Display" },
       { "command": "fileHeader.configurePathSeparator", "title": "Configure Path Separator" },
       { "command": "fileHeader.configureLicense", "title": "Configure License" },
@@ -268,7 +359,9 @@
       { "command": "fileHeader.configureProjectDescription", "title": "Configure Project Description" },
       { "command": "fileHeader.toggleAutoUpdateLastModified", "title": "Toggle Auto Update Last Modified" },
       { "command": "fileHeader.toggleAutoUpdateEditor", "title": "Toggle Auto Update Editor Info" },
-      { "command": "fileHeader.cleanupDuplicateLastEntries", "title": "Cleanup Duplicate Last Entries" }
+      { "command": "fileHeader.cleanupDuplicateLastEntries", "title": "Cleanup Duplicate Last Entries" },
+      { "command": "fileHeader.updateCurrentHeader", "title": "Update Current File Header" },
+      { "command": "fileHeader.updateAllHeaders", "title": "Update All Headers in Workspace" }
     ],
     "keybindings": [
       { "command": "fileHeader.insert", "key": "ctrl+alt+h", "when": "editorTextFocus" }

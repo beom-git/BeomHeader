@@ -7,7 +7,7 @@
 // File Name     : config-commands.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Last Updated  : 2025-09-08 05:53:23 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -23,6 +23,7 @@
 
 import * as vscode from 'vscode';
 import { EXTENSION_SECTION } from '../../types/common.types';
+import { getSupportedLanguageIds, getLanguageExtensions } from '../language/comment-token-map';
 
 /**
  * Configuration commands class
@@ -95,6 +96,27 @@ export class ConfigCommands {
         await this.configureLicenseUrl();
       })
     );
+
+    // Add Language Extension Mapping
+    context.subscriptions.push(
+      vscode.commands.registerCommand('fileHeader.addLanguageExtensionMapping', async () => {
+        await this.addLanguageExtensionMapping();
+      })
+    );
+
+    // Remove Language Extension Mapping
+    context.subscriptions.push(
+      vscode.commands.registerCommand('fileHeader.removeLanguageExtensionMapping', async () => {
+        await this.removeLanguageExtensionMapping();
+      })
+    );
+
+    // List Language Extension Mappings
+    context.subscriptions.push(
+      vscode.commands.registerCommand('fileHeader.listLanguageExtensionMappings', async () => {
+        await this.listLanguageExtensionMappings();
+      })
+    );
   }
 
   /**
@@ -103,10 +125,10 @@ export class ConfigCommands {
   private async configureAuthorInfo(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
     
-    const currentFullName = config.get<string>('authorFullName', '');
-    const currentEmail = config.get<string>('authorEmail', '');
-    const currentTitle = config.get<string>('authorTitle', '');
-    const currentTeam = config.get<string>('teamName', '');
+    const currentFullName = config.get<string>('beomHeader.authorFullName', '');
+    const currentEmail = config.get<string>('beomHeader.authorEmail', '');
+    const currentTitle = config.get<string>('beomHeader.authorTitle', '');
+    const currentTeam = config.get<string>('beomHeader.teamName', '');
 
     // Full Name
     const fullName = await vscode.window.showInputBox({
@@ -217,22 +239,22 @@ export class ConfigCommands {
     
     const templates = [
       {
-        label: '(C) Copyright ${startYear}-${endYear} ${company}',
+        label: '(C) Copyright ${startYear}-${endYear} ${companyName}',
         description: 'Standard copyright format',
         detail: 'Default format with year range'
       },
       {
-        label: 'Copyright ${endYear} ${company}',
+        label: 'Copyright ${endYear} ${companyName}',
         description: 'Simple copyright format',
         detail: 'Current year only'
       },
       {
         label: 'Copyright (c) ${startYear}-${endYear} ${author}',
         description: 'Author-based copyright',
-        detail: 'Uses author instead of company'
+        detail: 'Uses author instead of company name'
       },
       {
-        label: '© ${endYear} ${company}. All rights reserved.',
+        label: '© ${endYear} ${companyName}. All rights reserved.',
         description: 'Copyright symbol format',
         detail: 'Modern format with symbol'
       },
@@ -254,8 +276,8 @@ export class ConfigCommands {
     if (selected.label === 'Custom') {
       const customTemplate = await vscode.window.showInputBox({
         prompt: 'Enter your custom copyright notice template',
-        placeHolder: '(C) Copyright ${startYear}-${endYear} ${company}',
-        value: config.get<string>('copyrightNotice', ''),
+        placeHolder: '(C) Copyright ${startYear}-${endYear} ${companyName}',
+        value: config.get<string>('beomHeader.copyrightNotice', ''),
         validateInput: (value) => {
           if (!value || value.trim().length === 0) {
             return 'Copyright notice cannot be empty';
@@ -302,7 +324,7 @@ export class ConfigCommands {
       const customFormat = await vscode.window.showInputBox({
         prompt: 'Enter custom version format (use {major}, {patch}, {minor}, {major:02d}, etc.)',
         placeHolder: 'v{major:02d}p{patch:02d}',
-        value: config.get<string>('customVersionFormat', '')
+        value: config.get<string>('beomHeader.customVersionFormat', '')
       });
       
       if (customFormat) {
@@ -342,7 +364,7 @@ export class ConfigCommands {
     const lengthInput = await vscode.window.showInputBox({
       prompt: 'Enter separator line length (10-200)',
       placeHolder: '70',
-      value: config.get<number>('separatorLength', 70).toString(),
+      value: config.get<number>('beomHeader.separatorLength', 70).toString(),
       validateInput: (value) => {
         const num = parseInt(value);
         if (isNaN(num) || num < 10 || num > 200) {
@@ -422,7 +444,7 @@ export class ConfigCommands {
       const customDescription = await vscode.window.showInputBox({
         prompt: 'Enter your custom project description template',
         placeHolder: 'This module provides core functionality for the ${projectName} application',
-        value: config.get<string>('projectDescription', ''),
+        value: config.get<string>('beomHeader.projectDescription', ''),
         validateInput: (value) => {
           if (!value || value.trim().length === 0) {
             return 'Project description cannot be empty';
@@ -534,7 +556,7 @@ export class ConfigCommands {
     const licenseUrl = await vscode.window.showInputBox({
       prompt: 'Enter the URL to your license text (optional)',
       placeHolder: 'https://example.com/LICENSE',
-      value: config.get<string>('licenseUrl', ''),
+      value: config.get<string>('beomHeader.licenseUrl', ''),
       validateInput: (value) => {
         if (value && !/^https?:\/\/.+/.test(value)) {
           return 'Please enter a valid HTTP or HTTPS URL';
@@ -552,5 +574,208 @@ export class ConfigCommands {
         
       vscode.window.showInformationMessage(message);
     }
+  }
+
+  /**
+   * Add language extension mapping
+   */
+  private async addLanguageExtensionMapping(): Promise<void> {
+    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+    
+    // Get language ID
+    const languageId = await vscode.window.showInputBox({
+      prompt: 'Enter the language ID',
+      placeHolder: 'typescript, javascript, python, etc.',
+      validateInput: (value) => {
+        if (!value?.trim()) {
+          return 'Language ID cannot be empty';
+        }
+        return null;
+      }
+    });
+
+    if (!languageId) return;
+
+    // Check if this language has default mappings
+    const defaultMappings = config.inspect<Record<string, string[]>>('beomHeader.languageExtensions')?.defaultValue || {};
+    const defaultExtensions = defaultMappings[languageId.toLowerCase()];
+    
+    let promptText = 'Enter file extensions (comma-separated)';
+    let placeholderText = '.ts, .tsx, .mts';
+    
+    if (defaultExtensions) {
+      promptText = `Enter file extensions to override default (current: ${defaultExtensions.join(', ')})`;
+      placeholderText = defaultExtensions.join(', ');
+    }
+
+    // Get file extensions
+    const extensionsInput = await vscode.window.showInputBox({
+      prompt: promptText,
+      placeHolder: placeholderText,
+      value: defaultExtensions ? defaultExtensions.join(', ') : '',
+      validateInput: (value) => {
+        if (!value?.trim()) {
+          return 'Extensions cannot be empty';
+        }
+        const extensions = value.split(',').map(ext => ext.trim());
+        for (const ext of extensions) {
+          if (!ext.startsWith('.') && !ext.includes('Makefile') && !ext.includes('Dockerfile')) {
+            return 'Extensions must start with a dot (e.g., .ts, .js) or be special files (Makefile, Dockerfile)';
+          }
+        }
+        return null;
+      }
+    });
+
+    if (!extensionsInput) return;
+
+    // Parse extensions
+    const extensions = extensionsInput.split(',').map(ext => ext.trim());
+    
+    // Get current mappings
+    const currentMappings = config.get<Record<string, string[]>>('beomHeader.languageExtensions', {});
+    
+    // Add new mapping
+    currentMappings[languageId.toLowerCase()] = extensions;
+    
+    // Update configuration
+    await config.update('beomHeader.languageExtensions', currentMappings, vscode.ConfigurationTarget.Global);
+    
+    const isOverride = defaultExtensions ? ' (overriding default)' : '';
+    vscode.window.showInformationMessage(
+      `Language extension mapping ${defaultExtensions ? 'updated' : 'added'}: ${languageId} → ${extensions.join(', ')}${isOverride}`
+    );
+  }
+
+  /**
+   * Remove language extension mapping
+   */
+  private async removeLanguageExtensionMapping(): Promise<void> {
+    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+    const currentMappings = config.get<Record<string, string[]>>('beomHeader.languageExtensions', {});
+    const defaultMappings = config.inspect<Record<string, string[]>>('beomHeader.languageExtensions')?.defaultValue || {};
+    
+    if (Object.keys(currentMappings).length === 0) {
+      vscode.window.showInformationMessage('No custom language extension mappings found.');
+      return;
+    }
+
+    // Create options for quick pick - only show languages that are actually customized
+    const options = Object.entries(currentMappings)
+      .filter(([languageId]) => {
+        // Show if it's completely custom or overrides a default
+        return !defaultMappings[languageId] || 
+               JSON.stringify(currentMappings[languageId]) !== JSON.stringify(defaultMappings[languageId]);
+      })
+      .map(([languageId, extensions]) => {
+        const defaultExt = defaultMappings[languageId];
+        const isCustom = !defaultExt;
+        const description = isCustom 
+          ? `${extensions.join(', ')} (custom language)`
+          : `${extensions.join(', ')} (will restore to: ${defaultExt.join(', ')})`;
+        
+        return {
+          label: languageId,
+          description,
+          detail: isCustom ? `Remove custom language mapping` : `Restore default mapping`,
+          value: languageId,
+          isCustom
+        };
+      });
+
+    if (options.length === 0) {
+      vscode.window.showInformationMessage('No custom or overridden language extension mappings found.');
+      return;
+    }
+
+    const selected = await vscode.window.showQuickPick(options, {
+      placeHolder: 'Select language mapping to remove/restore'
+    });
+
+    if (!selected) return;
+
+    // Remove the mapping
+    delete currentMappings[selected.value];
+    
+    // Update configuration
+    await config.update('beomHeader.languageExtensions', currentMappings, vscode.ConfigurationTarget.Global);
+    
+    const defaultExt = defaultMappings[selected.value];
+    const message = defaultExt
+      ? `Language extension mapping restored to default: ${selected.label} → ${defaultExt.join(', ')}`
+      : `Custom language extension mapping removed: ${selected.label}`;
+    
+    vscode.window.showInformationMessage(message);
+  }
+
+  /**
+   * List language extension mappings
+   */
+  private async listLanguageExtensionMappings(): Promise<void> {
+    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+    
+    // Get default mappings from configuration default
+    const defaultMappings = config.inspect<Record<string, string[]>>('beomHeader.languageExtensions')?.defaultValue || {};
+    
+    // Get user custom mappings (those that differ from defaults)
+    const currentMappings = config.get<Record<string, string[]>>('beomHeader.languageExtensions', {});
+    
+    // Separate custom mappings (new languages or overridden defaults)
+    const customMappings: Record<string, string[]> = {};
+    const overriddenDefaults: Record<string, string[]> = {};
+    
+    for (const [languageId, extensions] of Object.entries(currentMappings)) {
+      if (!defaultMappings[languageId]) {
+        // This is a completely new language
+        customMappings[languageId] = extensions;
+      } else if (JSON.stringify(extensions) !== JSON.stringify(defaultMappings[languageId])) {
+        // This overrides a default mapping
+        overriddenDefaults[languageId] = extensions;
+      }
+    }
+    
+    // Create display content
+    let content = '# Language Extension Mappings\n\n';
+    
+    content += '## Default Mappings\n';
+    content += '*These are the built-in language extension mappings:*\n\n';
+    
+    for (const [languageId, extensions] of Object.entries(defaultMappings).sort()) {
+      const isOverridden = overriddenDefaults[languageId];
+      const prefix = isOverridden ? '~~' : '';
+      const suffix = isOverridden ? '~~ *(overridden)*' : '';
+      content += `- **${prefix}${languageId}${suffix}**: ${extensions.join(', ')}\n`;
+    }
+    
+    if (Object.keys(overriddenDefaults).length > 0) {
+      content += '\n## Overridden Default Mappings\n';
+      content += '*These default mappings have been customized:*\n\n';
+      for (const [languageId, extensions] of Object.entries(overriddenDefaults).sort()) {
+        const defaultExt = defaultMappings[languageId] || [];
+        content += `- **${languageId}**: ${extensions.join(', ')} *(was: ${defaultExt.join(', ')})*\n`;
+      }
+    }
+    
+    if (Object.keys(customMappings).length > 0) {
+      content += '\n## Custom Language Mappings\n';
+      content += '*These are completely new language mappings:*\n\n';
+      for (const [languageId, extensions] of Object.entries(customMappings).sort()) {
+        content += `- **${languageId}**: ${extensions.join(', ')}\n`;
+      }
+    }
+    
+    content += '\n## Usage\n';
+    content += '- Use "Add Language Extension Mapping" to add new mappings or override defaults\n';
+    content += '- Use "Remove Language Extension Mapping" to remove custom mappings (restores defaults)\n';
+    content += '- Custom mappings override default mappings for the same language ID\n';
+    content += '- Default mappings are built into the extension and cannot be permanently removed\n';
+
+    // Show in a new document
+    const doc = await vscode.workspace.openTextDocument({
+      content,
+      language: 'markdown'
+    });
+    
+    await vscode.window.showTextDocument(doc);
   }
 }

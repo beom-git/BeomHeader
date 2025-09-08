@@ -7,7 +7,7 @@
 // File Name     : comment-token-map.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Last Updated  : 2025-09-08 05:53:23 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -117,16 +117,95 @@ const commentTokenMap: CommentTokenMap = {
 };
 
 /**
- * Get comment token for file extension
+ * Language ID to file extension mapping (supports multiple extensions per language)
  */
-export function getCommentToken(fileExtension: string): CommentToken {
-  const normalizedExt = fileExtension.toLowerCase();
+const languageIdToExtension: Record<string, string[]> = {
+  'typescript': ['.ts', '.tsx'],
+  'javascript': ['.js', '.jsx', '.mjs', '.cjs'],
+  'typescriptreact': ['.tsx'],
+  'javascriptreact': ['.jsx'],
+  'python': ['.py', '.pyw', '.pyi'],
+  'java': ['.java'],
+  'c': ['.c', '.h'],
+  'cpp': ['.cpp', '.cc', '.cxx', '.c++', '.hpp', '.hh', '.hxx', '.h++'],
+  'csharp': ['.cs'],
+  'go': ['.go'],
+  'rust': ['.rs'],
+  'swift': ['.swift'],
+  'kotlin': ['.kt', '.kts'],
+  'scala': ['.scala', '.sc'],
+  'ruby': ['.rb', '.rbw'],
+  'perl': ['.pl', '.pm', '.t'],
+  'shell': ['.sh'],
+  'shellscript': ['.sh', '.bash', '.zsh', '.fish'],
+  'bash': ['.bash', '.sh'],
+  'powershell': ['.ps1', '.psm1', '.psd1'],
+  'r': ['.r', '.R'],
+  'html': ['.html', '.htm', '.xhtml'],
+  'xml': ['.xml', '.xsd', '.xsl', '.xslt'],
+  'css': ['.css'],
+  'scss': ['.scss'],
+  'sass': ['.sass'],
+  'less': ['.less'],
+  'stylus': ['.styl'],
+  'haskell': ['.hs', '.lhs'],
+  'ocaml': ['.ml', '.mli'],
+  'fsharp': ['.fs', '.fsi', '.fsx'],
+  'clojure': ['.clj', '.cljs', '.cljc'],
+  'lisp': ['.lisp', '.lsp'],
+  'sql': ['.sql', '.pgsql', '.mysql'],
+  'markdown': ['.md', '.markdown', '.mdown', '.mkd'],
+  'tex': ['.tex', '.latex'],
+  'yaml': ['.yml', '.yaml'],
+  'toml': ['.toml'],
+  'ini': ['.ini', '.cfg', '.conf'],
+  'vim': ['.vim', '.vimrc'],
+  'lua': ['.lua'],
+  'matlab': ['.m'],
+  'julia': ['.jl'],
+  'dart': ['.dart'],
+  'php': ['.php', '.phtml', '.php3', '.php4', '.php5'],
+  'elixir': ['.ex', '.exs'],
+  'erlang': ['.erl', '.hrl'],
+  'assembly': ['.asm', '.s', '.S'],
+  'makefile': ['Makefile', 'makefile', '.mk'],
+  'dockerfile': ['Dockerfile', '.dockerfile'],
+  'json': ['.json', '.jsonc'],
+  'jsonc': ['.jsonc'],
+  'properties': ['.properties'],
+  'gitignore': ['.gitignore'],
+  'ignore': ['.ignore', '.eslintignore', '.prettierignore']
+};
+
+/**
+ * Get comment token for file extension or language ID
+ */
+export function getCommentToken(fileExtensionOrLanguageId: string): CommentToken {
+  let normalizedExt: string;
+  
+  // Check if it's a language ID or file extension
+  if (fileExtensionOrLanguageId.startsWith('.')) {
+    normalizedExt = fileExtensionOrLanguageId.toLowerCase();
+  } else {
+    // It's a language ID, convert to extension
+    const extensions = getLanguageExtensions(fileExtensionOrLanguageId.toLowerCase());
+    
+    if (extensions && extensions.length > 0) {
+      normalizedExt = extensions[0]; // Use first extension as primary
+    } else {
+      normalizedExt = '.txt'; // Default fallback
+    }
+  }
   
   // First check user configuration
   const userConfig = getCommentTokenMap();
-  if (userConfig[normalizedExt]) {
+  const languageId = fileExtensionOrLanguageId.startsWith('.') 
+    ? fileExtensionOrLanguageId.substring(1) 
+    : fileExtensionOrLanguageId;
+    
+  if (userConfig[languageId]) {
     // Parse user config format for backward compatibility
-    const userToken = userConfig[normalizedExt];
+    const userToken = userConfig[languageId];
     return { single: userToken };
   }
   
@@ -141,6 +220,49 @@ export function getCommentTokenMap(): Record<string, string> {
   return vscode.workspace
     .getConfiguration('beomHeader')
     .get<Record<string, string>>('commentTokenMap', {});
+}
+
+/**
+ * Get default language extensions from configuration
+ */
+function getDefaultLanguageExtensions(): Record<string, string[]> {
+  const config = vscode.workspace.getConfiguration('beomHeader');
+  return config.get<Record<string, string[]>>('languageExtensions', {});
+}
+
+/**
+ * Retrieves the user-configured language to extensions mapping
+ */
+export function getUserLanguageExtensions(languageId: string): string[] | undefined {
+  const config = vscode.workspace.getConfiguration('beomHeader');
+  const userExtensions = config.get<Record<string, string[]>>('languageExtensions', {});
+  
+  return userExtensions[languageId];
+}
+
+/**
+ * Get all supported language IDs
+ */
+export function getSupportedLanguageIds(): string[] {
+  const defaultExtensions = getDefaultLanguageExtensions();
+  const userExtensions = vscode.workspace.getConfiguration('beomHeader')
+    .get<Record<string, string[]>>('languageExtensions', {});
+  
+  return [...new Set([...Object.keys(defaultExtensions), ...Object.keys(userExtensions)])];
+}
+
+/**
+ * Get extensions for a language ID (user config takes precedence over defaults)
+ */
+export function getLanguageExtensions(languageId: string): string[] {
+  const defaultExtensions = getDefaultLanguageExtensions();
+  const userExtensions = getUserLanguageExtensions(languageId);
+  
+  if (userExtensions && userExtensions.length > 0) {
+    return userExtensions;
+  }
+  
+  return defaultExtensions[languageId] || languageIdToExtension[languageId] || [];
 }
 
 /**

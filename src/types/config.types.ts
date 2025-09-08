@@ -7,7 +7,7 @@
 // File Name     : config.types.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
+// Last Updated  : 2025-09-08 05:51:55 (by root)
 // Editor        : Visual Studio Code, space size (2)
 // Description   : 
 //
@@ -23,7 +23,7 @@
 export interface BeomHeaderConfig {
   // Core Settings
   projectName: string;
-  company: string;
+  companyName: string;
   copyrightStartYears: string;
   
   // Author & Team Settings

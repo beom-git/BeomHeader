@@ -4,6 +4,36 @@ All notable changes to the "beom-header" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [3.1.0] - 2025-09-08
+
+### Added
+- **Advanced Language Extension Mapping**: Enhanced language-to-extension mapping system supporting multiple file extensions per language
+- **Multi-Extension Support**: Language IDs can now map to arrays of extensions (e.g., `typescript: [".ts", ".tsx"]`)
+- **Transparent Default Mappings**: 50+ default language mappings exposed in package.json for user visibility
+- **Enhanced Language Management Commands**: 
+  - Improved `listLanguageExtensionMappings` with categorized display (defaults, custom, overridden)
+  - Enhanced `addLanguageExtensionMapping` with default detection and clear prompts
+  - Advanced `removeLanguageExtensionMapping` with restore-to-default functionality
+- **User-Friendly Configuration**: Default language mappings visible in VS Code settings for easy customization
+- **Smart Override Detection**: Visual distinction between default, custom, and overridden language mappings
+- **Comprehensive Language Coverage**: Extended support to 50+ programming languages with transparent defaults
+
+### Changed
+- **Language Extension Mapping Structure**: Migrated from `Record<string, string>` to `Record<string, string[]>` for multi-extension support
+- **Configuration Visibility**: Moved comprehensive language mappings from code to user-visible package.json defaults
+- **Command User Experience**: Enhanced language management commands with better feedback and categorization
+- **Default Handling**: Improved logic for default/user preference handling in language extension resolution
+
+### Fixed
+- **Test Suite**: Updated comment token mapping tests to work with new multi-extension system
+- **Language ID Resolution**: Fixed language ID to extension mapping with proper fallback handling
+- **Configuration Management**: Improved user configuration precedence over default mappings
+
+### Technical Improvements
+- **Type Safety**: Enhanced TypeScript interfaces for multi-extension language mapping
+- **Code Organization**: Better separation of default mappings and user customizations
+- **Performance**: Optimized language extension lookup with efficient default/override resolution
+
 ## [3.0.0] - 2025-09-08
 
 ### Added

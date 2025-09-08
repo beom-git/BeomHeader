@@ -1,43 +1,8 @@
 # Beom Header
 
-![Version](https://img.shields.io/badge/version-3.0.5-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-3.1.0-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 Insert standardized file headers for various file types in Visual Studio Code, with comprehensive configuration options, auto-update features, and modular architecture.
-
-## What's New in v3.0
-
-- **Complete Architecture Refactoring**: Modular design with separated concerns for better maintainability
-- **Organized Code Structure**: New directory structure with `core/`, `utils/`, `types/`, and `assets/` modules
-- **Type Safety**: Comprehensive TypeScript interfaces and type definitions throughout
-- **Enhanced Performance**: Optimized template processing and variable resolution
-- **Command Separation**: Organized commands into logical groups (header, config, management)
-- **Improved Template System**: Better template management with secure asset handling
-- **Auto-Update System**: Redesigned with strategy pattern for extensible update logic
-- **60+ Language Support**: Extended comment token mappings for more programming languages
-- **Consistent Function Naming**: Unified naming conventions across all modules
-- **Better Error Handling**: Improved validation and error reporting throughout
-
----**Example** configuration in `settings.json`:
-```json
-{
-  "beomHeader.projectName": "My Awesome Project",
-  "beomHeader.company": "Tech Corp Inc.",
-  "beomHeader.authorFullName": "John Doe",
-  "beomHeader.authorEmail": "john.doe@techcorp.com",
-  "beomHeader.teamName": "Development Team",
-  "beomHeader.licenseType": "MIT",
-  "beomHeader.headerStyle": "detailed",
-  "beomHeader.projectDescription": "This module provides advanced functionality for the ${projectName} system",
-  "beomHeader.autoUpdateLastModified": true,
-  "beomHeader.autoUpdateEditor": true,
-  "beomHeader.separatorChar": "=",
-  "beomHeader.separatorLength": 80,
-  "beomHeader.copyrightNotice": "(C) Copyright ${startYear}-${endYear} ${company}",
-  "beomHeader.versionFormat": "v{major:02d}p{patch:02d}",
-  "beomHeader.showRelativePath": true,
-  "beomHeader.includeLicenseHeader": true
-}
-```
 
 ---
 
@@ -49,7 +14,7 @@ Insert standardized file headers for various file types in Visual Studio Code, w
 - **Auto-Update System**: Strategy-based auto-updates for timestamps and editor information
 - **Modular Architecture**: Clean separation of concerns with organized code structure
 - **Multiple Header Styles**: Choose from standard, minimal, or detailed header templates
-- **Extensive Language Support**: 60+ programming languages with smart comment detection
+- **Extensive Language Support**: 50+ programming languages with smart comment detection and multi-extension mapping
 - **Comprehensive Configuration**: 25+ configuration options for complete customization
 - **Command-Based Management**: 20+ easy-to-use commands for all configuration aspects
 - **Type-Safe Development**: Full TypeScript implementation with comprehensive type definitions
@@ -127,6 +92,9 @@ Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 - **Configure Path Separator** — `fileHeader.configurePathSeparator`
 
 #### Language & Style Management
+- **Add Language Extension Mapping** — `fileHeader.addLanguageExtensionMapping`
+- **Remove Language Extension Mapping** — `fileHeader.removeLanguageExtensionMapping`
+- **List Language Extension Mappings** — `fileHeader.listLanguageExtensionMappings`
 - **Add Language Comment Token Mapping** — `fileHeader.addLanguageMapping`
 - **Remove Language Comment Token Mapping** — `fileHeader.removeLanguageMapping`
 - **List All Language Comment Token Mappings** — `fileHeader.listLanguageMappings`
@@ -222,14 +190,21 @@ All settings live under **Beom Header Settings** in `settings.json`. The extensi
 
 | Setting                     | Type     | Default                                    | Description                                     |
 | --------------------------- | -------- | ------------------------------------------ | ----------------------------------------------- |
+| `languageExtensions`        | object   | `{ "typescript": [".ts", ".tsx"], "javascript": [".js", ".jsx", ".mjs", ".cjs"], ... }` | Map from language ID to file extensions (50+ defaults) |
 | `commentTokenMap`           | object   | `{ "python": "#", "javascript": "//", ... }` | Map from language ID to comment token         |
 | `shebangPerLanguage`        | object   | `{ "python": "/usr/bin/env python3", ... }`  | Map from language ID to shebang line          |
 
-**Example** override in `settings.json`:
+**Example** override with language extension mappings in `settings.json`:
 ```json
 {
   "beomHeader.projectName": "Demo Project",
   "beomHeader.company": "Seongbeom.",
+  "beomHeader.languageExtensions": {
+    "typescript": [".ts", ".tsx", ".mts", ".cts"],
+    "javascript": [".js", ".jsx", ".mjs", ".cjs"],
+    "python": [".py", ".pyx", ".pyi"],
+    "customlang": [".custom", ".special"]
+  },
   "beomHeader.headerBodyTemplate": [
     "${comment}====== Custom Header ======",
     "${comment} Project : ${projectName}",
@@ -248,7 +223,28 @@ All settings live under **Beom Header Settings** in `settings.json`. The extensi
 
 ## Supported Languages
 
-The extension supports 60+ programming languages with appropriate comment tokens:
+The extension supports 50+ programming languages with comprehensive file extension mappings:
+
+### Default Language Extension Mappings
+
+| Language ID     | File Extensions | Language ID     | File Extensions |
+| --------------- | --------------- | --------------- | --------------- |
+| typescript      | `.ts`, `.tsx`, `.mts`, `.cts` | javascript      | `.js`, `.jsx`, `.mjs`, `.cjs` |
+| python          | `.py`, `.pyx`, `.pyi` | java            | `.java` |
+| csharp          | `.cs` | cpp             | `.cpp`, `.cc`, `.cxx` |
+| c               | `.c`, `.h` | go              | `.go` |
+| rust            | `.rs` | swift           | `.swift` |
+| kotlin          | `.kt`, `.kts` | scala           | `.scala`, `.sc` |
+| php             | `.php`, `.phtml` | ruby            | `.rb`, `.rbw` |
+| perl            | `.pl`, `.pm` | lua             | `.lua` |
+| shellscript     | `.sh`, `.bash`, `.zsh` | powershell      | `.ps1`, `.psm1` |
+| yaml            | `.yml`, `.yaml` | json            | `.json`, `.jsonc` |
+| xml             | `.xml`, `.xsd`, `.xsl` | html            | `.html`, `.htm` |
+| css             | `.css`, `.scss`, `.sass` | dart            | `.dart` |
+| haskell         | `.hs`, `.lhs` | erlang          | `.erl`, `.hrl` |
+| elixir          | `.ex`, `.exs` | clojure         | `.clj`, `.cljs` |
+
+### Comment Token Mappings
 
 | Language ID     | Comment Token | Language ID     | Comment Token |
 | --------------- | ------------- | --------------- | ------------- |
@@ -257,18 +253,25 @@ The extension supports 60+ programming languages with appropriate comment tokens
 | ruby            | `#`           | java            | `//`          |
 | perl            | `#`           | c               | `//`          |
 | lua             | `--`          | cpp             | `//`          |
-| verilog         | `//`          | csharp          | `//`          |
-| systemverilog   | `//`          | rust            | `//`          |
-| tcl             | `#`           | go              | `//`          |
-| upf             | `#`           | swift           | `//`          |
-| yaml            | `#`           | kotlin          | `//`          |
-| makefile        | `#`           | scala           | `//`          |
-| dockerfile      | `#`           | php             | `//`          |
-| bash            | `#`           | dart            | `//`          |
-| zsh             | `#`           | groovy          | `//`          |
-| powershell      | `#`           | haskell         | `--`          |
+| yaml            | `#`           | csharp          | `//`          |
+| makefile        | `#`           | rust            | `//`          |
+| dockerfile      | `#`           | go              | `//`          |
+| bash            | `#`           | swift           | `//`          |
+| zsh             | `#`           | kotlin          | `//`          |
+| powershell      | `#`           | scala           | `//`          |
 
-*You can add custom language mappings using the "Add Language Comment Token Mapping" command.*
+### Language Extension Management
+
+You can customize language extension mappings using the following commands:
+
+- **Add Language Extension Mapping**: Add custom languages or override defaults
+- **Remove Language Extension Mapping**: Remove custom mappings or restore defaults  
+- **List Language Extension Mappings**: View all mappings categorized as:
+  - 📝 **Default mappings**: Built-in language support
+  - ✏️ **Custom mappings**: User-added languages
+  - 🔄 **Overridden mappings**: Modified defaults (shown with ~~strikethrough~~)
+
+*All 50+ default language mappings are visible in VS Code settings under `beomHeader.languageExtensions` for easy customization.*
 
 ---
 
@@ -344,10 +347,10 @@ The extension uses a sophisticated modular template system with the following co
 
 ### Command System
 
-The extension provides 20+ commands organized into logical groups:
+The extension provides 28+ commands organized into logical groups:
 - **Header Commands**: Core header insertion functionality
 - **Config Commands**: Configuration and settings management  
-- **Management Commands**: Language mappings and toggle settings
+- **Management Commands**: Language mappings, extension mappings, and toggle settings
 
 All commands are accessible through the VS Code Command Palette for easy access.
 

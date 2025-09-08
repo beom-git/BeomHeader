@@ -7,7 +7,7 @@
 // File Name     : header-commands.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:08:08 (by root)
+// Last Updated  : 2025-09-08 05:36:43 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -79,7 +79,7 @@ export class HeaderCommands {
 
       const doc = editor.document;
       const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-      const commentToken = getCommentToken(`.${doc.languageId}`);
+      const commentToken = getCommentToken(doc.languageId);
       const comment = commentToken.single || '//';
 
       console.log('📄 insertFileHeader: Document info:');
@@ -189,7 +189,7 @@ export class HeaderCommands {
 
     const doc = editor.document;
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const commentToken = getCommentToken(`.${doc.languageId}`);
+    const commentToken = getCommentToken(doc.languageId);
     const comment = commentToken.single || '//';
     const author = os.userInfo().username;
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
@@ -256,7 +256,7 @@ export class HeaderCommands {
 
     const doc = editor.document;
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const commentToken = getCommentToken(`.${doc.languageId}`);
+    const commentToken = getCommentToken(doc.languageId);
     const comment = commentToken.single || '//';
     const author = os.userInfo().username;
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
@@ -294,8 +294,8 @@ export class HeaderCommands {
    * Format version number based on user configuration
    */
   private formatVersion(major: number, patch: number, minor: number, config: vscode.WorkspaceConfiguration): string {
-    const versionFormat = config.get<string>('versionFormat', 'v{major:02d}p{patch:02d}');
-    const customFormat = config.get<string>('customVersionFormat', 'v{major:02d}p{patch:02d}');
+    const versionFormat = config.get<string>('beomHeader.versionFormat', 'v{major:02d}p{patch:02d}');
+    const customFormat = config.get<string>('beomHeader.customVersionFormat', 'v{major:02d}p{patch:02d}');
     
     const format = versionFormat === 'custom' ? customFormat : versionFormat;
     
@@ -306,5 +306,102 @@ export class HeaderCommands {
       .replace(/\{patch\}/g, patch.toString())
       .replace(/\{minor:02d\}/g, minor.toString().padStart(2, '0'))
       .replace(/\{minor\}/g, minor.toString());
+  }
+
+  /**
+   * Check if the file has an existing header
+   */
+  public async hasExistingHeader(editor: vscode.TextEditor): Promise<boolean> {
+    const doc = editor.document;
+    const commentToken = getCommentToken(doc.languageId);
+    const comment = commentToken.single || '//';
+    
+    // Check first 20 lines for header pattern
+    const snippet = doc.getText(new vscode.Range(0, 0, Math.min(20, doc.lineCount), 0));
+    const separatorLine = `${comment}-----------------------------------------------------`;
+    
+    return snippet.includes(separatorLine);
+  }
+
+  /**
+   * Update existing header in the current file
+   */
+  public async updateExistingHeader(editor: vscode.TextEditor): Promise<void> {
+    const doc = editor.document;
+    const commentToken = getCommentToken(doc.languageId);
+    const comment = commentToken.single || '//';
+    
+    // Find header boundaries
+    const headerBounds = this.findHeaderBounds(doc, comment);
+    if (!headerBounds) {
+      throw new Error('No existing header found to update');
+    }
+
+    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+    
+    // Generate new header
+    const templateManager = TemplateManager.getInstance(this.extensionPath);
+    const variableResolver = new VariableResolver();
+    const variables = variableResolver.resolveVariables(doc, config, this.extensionPath);
+    
+    const headerTemplateLines = templateManager.getHeaderBodyTemplate(config);
+    if (headerTemplateLines.length === 0) {
+      throw new Error('No header template found. Please check your configuration.');
+    }
+    
+    const newHeader = headerTemplateLines.map(line => 
+      variableResolver.interpolateTemplate(line, variables)
+    ).join('\n');
+
+    // Replace existing header
+    const headerRange = new vscode.Range(
+      new vscode.Position(headerBounds.start, 0),
+      new vscode.Position(headerBounds.end + 1, 0)
+    );
+
+    await editor.edit(editBuilder => {
+      editBuilder.replace(headerRange, newHeader + '\n');
+    });
+  }
+
+  /**
+   * Find header boundaries in the document
+   */
+  private findHeaderBounds(doc: vscode.TextDocument, comment: string): { start: number; end: number } | null {
+    const lines = doc.getText().split(/\r?\n/);
+    const separatorPattern = `${comment}-----------------------------------------------------`;
+    
+    let startLine = -1;
+    let endLine = -1;
+    
+    // Find start of header (first separator line)
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+      if (lines[i].includes(separatorPattern)) {
+        startLine = i;
+        break;
+      }
+    }
+    
+    if (startLine === -1) {
+      return null;
+    }
+    
+    // Find end of header (last separator line or end of header section)
+    for (let i = startLine + 1; i < Math.min(startLine + 50, lines.length); i++) {
+      if (lines[i].includes(separatorPattern)) {
+        endLine = i;
+        // Continue to find the actual end (could be multiple separator sections)
+      } else if (endLine !== -1 && lines[i].trim() === '') {
+        // Empty line after separator might indicate end of header
+        break;
+      }
+    }
+    
+    if (endLine === -1) {
+      // If no ending separator found, assume header ends at a reasonable point
+      endLine = Math.min(startLine + 30, lines.length - 1);
+    }
+    
+    return { start: startLine, end: endLine };
   }
 }

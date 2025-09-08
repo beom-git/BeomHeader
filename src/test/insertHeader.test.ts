@@ -121,13 +121,13 @@ export const runInsertHeaderTests = async () => {
 		const config = vscode.workspace.getConfiguration('beomHeader');
 		
 		// Check if configuration values are accessible
-		const company = config.get('company') || 'Default Company';
+		const companyName = config.get('companyName') || 'Default Company';
 		const projectName = config.get('projectName') || 'Default Project';
 		const authorFullName = config.get('authorFullName') || 'Default Author';
 		const authorEmail = config.get('authorEmail') || '';
 		
 		console.log(`📋 Configuration values:
-		  - Company: ${company}
+		  - company Name: ${companyName}
 		  - Project Name: ${projectName}  
 		  - Author: ${authorFullName}
 		  - Email: ${authorEmail}`);

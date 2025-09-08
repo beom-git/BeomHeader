@@ -7,7 +7,7 @@
 // File Name     : template.types.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
+// Last Updated  : 2025-09-08 05:53:23 (by root)
 // Editor        : Visual Studio Code, space size (2)
 // Description   : 
 //
@@ -37,33 +37,53 @@ export type CommentTokenMap = Record<string, CommentToken>;
  * Available template variables for substitution
  */
 export interface TemplateVariables {
-  // Core fields
-  authorName: string;
-  authorEmail: string;
-  creationDate: string;
-  lastModifiedDate: string;
-  lastModifiedUser: string;
-  editorInfo: string;
-  fileName: string;
-  projectName: string;
-  description: string;
-  copyright: string;
-  fileHistory: string;
-  todoList: string;
-  
-  // Additional template fields
+  // Basic tokens
   comment: string;
   separator: string;
-  company: string;
+  
+  // Project information
+  projectName: string;
+  projectDescription: string;
+  companyName: string;
+  
+  // File information
+  fileName: string;
   fullPath: string;
   relativePath: string;
   baseFileName: string;
+  
+  // Author information
   author: string;
-  authorWithEmail: string;
+  authorName: string;
+  authorEmail: string;
+  authorFullName: string;
+  authorTitle: string;
+  authorWithTitle: string;
+  teamName: string;
+  
+  // Date and time
+  today: string;
+  lastModifiedDate: string;
+  lastModifiedUser: string;
   currentDate: string;
   currentYear: string;
   startYear: string;
   endYear: string;
+  
+  // Required core fields
+  creationDate: string;
+  description: string;
+  copyright: string;
+  fileHistory: string;
+  todoList: string;
+  authorWithEmail: string;
+  
+  // Editor information
+  editorInfo: string;
+  
+  // Legal information
+  copyrightNotice: string;
+  licenseText: string;
   licenseType: string;
   licenseUrl: string;
   
