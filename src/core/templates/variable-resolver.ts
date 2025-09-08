@@ -7,8 +7,8 @@
 // File Name     : variable-resolver.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Last Last Updated : 2025-09-08 04:00:39 (by root)
+// Editor       : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file manages template variable resolution and interpolation.
@@ -69,7 +69,7 @@ export class VariableResolver {
       
       // Author information
       author: authorInfo.name,
-      authorName: this.formatAuthorName(authorInfo),
+      authorName: authorInfo.name,
       authorEmail: authorInfo.email,
       authorFullName: authorInfo.fullName,
       authorTitle: authorInfo.title,
@@ -90,7 +90,7 @@ export class VariableResolver {
       copyright: this.getCopyrightNotice(config, { startYear, endYear, company: config.get<string>('company', ''), author: authorInfo.name }),
       fileHistory: '',
       todoList: '',
-      authorWithEmail: authorInfo.email ? `${authorInfo.name} (${authorInfo.email})` : authorInfo.name,
+      authorWithEmail: this.formatAuthorWithEmail(authorInfo),
       
       // Editor information
       editorInfo: this.formatEditorInfo(editorConfig),
@@ -217,12 +217,26 @@ export class VariableResolver {
   }
 
   /**
-   * Format author name with email if available
+   * Format author name with email if available (smart formatting to avoid duplicates)
+   */
+  private formatAuthorWithEmail(authorInfo: AuthorInfo): string {
+    if (!authorInfo.email) {
+      return authorInfo.name;
+    }
+    
+    // Check if email is already included in the name
+    if (authorInfo.name.includes(authorInfo.email)) {
+      return authorInfo.name;
+    }
+    
+    return `${authorInfo.name} (${authorInfo.email})`;
+  }
+
+  /**
+   * Format author name (legacy method - now just returns name)
    */
   private formatAuthorName(authorInfo: AuthorInfo): string {
-    return authorInfo.email 
-      ? `${authorInfo.name} (${authorInfo.email})`
-      : authorInfo.name;
+    return authorInfo.name;
   }
 
   /**

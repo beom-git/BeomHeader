@@ -7,8 +7,8 @@
 // File Name     : header-commands.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Last Last Last Last Updated : 2025-09-08 03:46:44 (by root)
+// Editor       : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file contains commands for header insertion functionality.
@@ -63,11 +63,11 @@ export class HeaderCommands {
    */
   private async insertFileHeader(): Promise<void> {
     try {
-      console.log('insertFileHeader: Starting...');
+      console.log('🔧 insertFileHeader: Starting...');
       
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
-        console.log('insertFileHeader: No active editor');
+        console.log('❌ insertFileHeader: No active editor');
         vscode.window.showErrorMessage('No active editor found');
         return;
       }
@@ -77,42 +77,100 @@ export class HeaderCommands {
       const commentToken = getCommentToken(`.${doc.languageId}`);
       const comment = commentToken.single || '//';
 
-      console.log('insertFileHeader: Language:', doc.languageId, 'Comment:', comment);
+      console.log('📄 insertFileHeader: Document info:');
+      console.log('  - Language:', doc.languageId);
+      console.log('  - Comment token:', comment);
+      console.log('  - File name:', doc.fileName);
+      console.log('  - URI:', doc.uri.toString());
+      console.log('  - Current content length:', doc.getText().length);
 
       // Prevent duplicate insertion
       const snippet = doc.getText(new vscode.Range(0, 0, 20, 0));
       const separatorLine = `${comment}-----------------------------------------------------`;
       if (snippet.includes(separatorLine)) {
+        console.log('⚠️ insertFileHeader: Header already exists, skipping');
         vscode.window.showInformationMessage('Header already exists. Skipping insertion.');
         return;
       }
 
-      console.log('insertFileHeader: Getting template manager...');
+      console.log('🏭 insertFileHeader: Getting template manager...');
       
       // Generate header
       const templateManager = TemplateManager.getInstance(this.extensionPath);
-      const variableResolver = new VariableResolver();
-      const variables = variableResolver.resolveVariables(doc, config, this.extensionPath);
+      console.log('📋 insertFileHeader: Template manager initialized');
       
-      console.log('insertFileHeader: Variables resolved:', Object.keys(variables));
+      const variableResolver = new VariableResolver();
+      console.log('🔍 insertFileHeader: Variable resolver initialized');
+      
+      const variables = variableResolver.resolveVariables(doc, config, this.extensionPath);
+      console.log('💾 insertFileHeader: Variables resolved:');
+      console.log('  - Variable keys:', Object.keys(variables));
+      console.log('  - Sample variables:', {
+        comment: variables.comment,
+        fileName: variables.fileName,
+        author: variables.author,
+        today: variables.today
+      });
       
       const headerTemplateLines = templateManager.getHeaderBodyTemplate(config);
+      console.log('📝 insertFileHeader: Template lines:');
+      console.log('  - Lines count:', headerTemplateLines.length);
+      console.log('  - Template preview:', headerTemplateLines.slice(0, 3));
       
-      console.log('insertFileHeader: Template lines count:', headerTemplateLines.length);
+      if (headerTemplateLines.length === 0) {
+        console.error('❌ insertFileHeader: No template lines found!');
+        vscode.window.showErrorMessage('No header template found. Please check your configuration.');
+        return;
+      }
       
-      const header = headerTemplateLines.map(line => 
-        variableResolver.interpolateTemplate(line, variables)
-      ).join('\n');
+      const header = headerTemplateLines.map((line, index) => {
+        const interpolated = variableResolver.interpolateTemplate(line, variables);
+        console.log(`  Line ${index}: "${line}" → "${interpolated}"`);
+        return interpolated;
+      }).join('\n');
 
-      console.log('insertFileHeader: Generated header preview:', header.substring(0, 100) + '...');
+      console.log('🎯 insertFileHeader: Generated header:');
+      console.log('  - Header length:', header.length);
+      console.log('  - Header preview (first 200 chars):', header.substring(0, 200));
+      console.log('  - Header full content:');
+      console.log(header);
 
-      await editor.edit(e => e.insert(new vscode.Position(0, 0), header));
+      if (!header || header.trim().length === 0) {
+        console.error('❌ insertFileHeader: Generated header is empty!');
+        vscode.window.showErrorMessage('Generated header is empty. Please check your template configuration.');
+        return;
+      }
+
+      console.log('✏️ insertFileHeader: Inserting header at position (0,0)...');
+      const position = new vscode.Position(0, 0);
+      console.log('📍 Position details:', { line: position.line, character: position.character });
+
+      const editResult = await editor.edit(editBuilder => {
+        console.log('🔨 Editor.edit callback executing...');
+        editBuilder.insert(position, header + '\n');
+        console.log('📝 Insert operation completed');
+      });
+
+      console.log('📊 Edit result:', editResult);
       
-      console.log('insertFileHeader: Header inserted successfully');
-      vscode.window.showInformationMessage('File header inserted successfully!');
+      if (editResult) {
+        console.log('✅ insertFileHeader: Header inserted successfully');
+        console.log('📄 Document content length after insertion:', doc.getText().length);
+        vscode.window.showInformationMessage('File header inserted successfully!');
+      } else {
+        console.error('❌ insertFileHeader: Edit operation failed!');
+        vscode.window.showErrorMessage('Failed to insert header. Edit operation returned false.');
+      }
       
     } catch (error) {
-      console.error('insertFileHeader: Error occurred:', error);
+      console.error('💥 insertFileHeader: Error occurred:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
       vscode.window.showErrorMessage(`Failed to insert header: ${error}`);
     }
   }

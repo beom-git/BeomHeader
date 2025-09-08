@@ -7,8 +7,8 @@
 // File Name     : auto-updater.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Last Updated : 2025-09-08 04:00:39 (by root)
+// Editor       : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file manages automatic header updates on file save.
@@ -30,10 +30,12 @@ import { UpdateStrategy } from '../../types/common.types';
  */
 class LastModifiedUpdateStrategy implements UpdateStrategy {
   name = 'LastModified';
-  pattern = /^(.*)(?:Last Updated|Updated)\s*:\s*(.*)$/;
+  // More robust pattern to handle any number of "Last" repetitions
+  pattern = /^(.*?)(?:\s*(?:Last\s+)*(?:Last\s+)?Updated\s*:\s*.*|Updated\s*:\s*.*)$/;
 
   canUpdate(line: string): boolean {
-    return this.pattern.test(line);
+    // Check if line contains "Last Updated : 2025-09-08 04:00:39 (by root)
+    return /Updated\s*:\s*/.test(line);
   }
 
   updateLine(line: string, variables: Record<string, string>): string {
@@ -41,7 +43,17 @@ class LastModifiedUpdateStrategy implements UpdateStrategy {
     const currentUser = require('os').userInfo().username;
     const newTimestamp = `${now} (by ${currentUser})`;
     
-    return line.replace(this.pattern, (_, prefix) => `${prefix}Last Updated : ${newTimestamp}`);
+    // Find the comment prefix and any existing field prefix
+    const match = line.match(/^(.*?)(?:\s*(?:Last\s+)*(?:Last\s+)?Updated\s*:\s*.*|Updated\s*:\s*.*)$/);
+    if (match) {
+      let prefix = match[1];
+      // Clean up any trailing "Last" words from the prefix
+      prefix = prefix.replace(/\s*(?:Last\s*)*$/, '');
+      return `${prefix} Last Updated  : ${newTimestamp}`;
+    }
+    
+    // Fallback - should not reach here if canUpdate works correctly
+    return line.replace(/Updated\s*:\s*.*$/, `Last Updated  : ${newTimestamp}`);
   }
 }
 
@@ -80,6 +92,52 @@ export class AutoUpdater {
         await this.updateDocument(event.document);
       })
     );
+
+    // Add command to clean up duplicate "Last" entries
+    context.subscriptions.push(
+      vscode.commands.registerCommand('fileHeader.cleanupDuplicateLastEntries', async () => {
+        await this.cleanupDuplicateLastEntries();
+      })
+    );
+  }
+
+  /**
+   * Clean up duplicate "Last" entries in the current document
+   */
+  private async cleanupDuplicateLastEntries(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+
+    const document = editor.document;
+    const text = document.getText();
+    const lines = text.split(/\r?\n/);
+    let hasUpdates = false;
+
+    // Process first 50 lines only (header area)
+    for (let i = 0; i < Math.min(50, lines.length); i++) {
+      const line = lines[i];
+      
+      // Check for lines with multiple "Last" entries
+      if (/Last\s+Last/.test(line) && /Updated\s*:/.test(line)) {
+        // Clean up multiple "Last" occurrences
+        const cleanedLine = line.replace(/(\s*)(?:Last\s+)+Last(\s+Updated\s*:\s*.*)/, '$1Last$2');
+        if (line !== cleanedLine) {
+          lines[i] = cleanedLine;
+          hasUpdates = true;
+          console.log(`Cleaned line ${i + 1}: "${line}" → "${cleanedLine}"`);
+        }
+      }
+    }
+
+    if (hasUpdates) {
+      const edit = new vscode.WorkspaceEdit();
+      const fullRange = new vscode.Range(0, 0, document.lineCount, 0);
+      edit.replace(document.uri, fullRange, lines.join('\n'));
+      await vscode.workspace.applyEdit(edit);
+      vscode.window.showInformationMessage('Cleaned up duplicate "Last" entries');
+    } else {
+      vscode.window.showInformationMessage('No duplicate "Last" entries found');
+    }
   }
 
   /**

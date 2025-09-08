@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -267,7 +267,8 @@
       { "command": "fileHeader.selectHeaderStyle", "title": "Select Header Template Style" },
       { "command": "fileHeader.configureProjectDescription", "title": "Configure Project Description" },
       { "command": "fileHeader.toggleAutoUpdateLastModified", "title": "Toggle Auto Update Last Modified" },
-      { "command": "fileHeader.toggleAutoUpdateEditor", "title": "Toggle Auto Update Editor Info" }
+      { "command": "fileHeader.toggleAutoUpdateEditor", "title": "Toggle Auto Update Editor Info" },
+      { "command": "fileHeader.cleanupDuplicateLastEntries", "title": "Cleanup Duplicate Last Entries" }
     ],
     "keybindings": [
       { "command": "fileHeader.insert", "key": "ctrl+alt+h", "when": "editorTextFocus" }
@@ -280,7 +281,9 @@
     "package": "vsce package",
     "publish": "vsce publish",
     "test": "npm run compile && node ./out/test/runTest.js",
-    "test-compile": "tsc -p ./"
+    "test-compile": "tsc -p ./",
+    "pretest": "npm run compile",
+    "test-watch": "npm run compile && npm run watch"
   },
   "devDependencies": {
     "@types/vscode": "^1.80.0",
@@ -288,6 +291,9 @@
     "typescript": "^4.9.5",
     "@vscode/test-electron": "^2.5.2",
     "@types/mocha": "^10.0.1",
-    "@vscode/vsce": "^2.22.0"
+    "@vscode/vsce": "^2.22.0",
+    "mocha": "^10.2.0",
+    "glob": "^10.3.0",
+    "@types/glob": "^8.1.0"
   }
 }
