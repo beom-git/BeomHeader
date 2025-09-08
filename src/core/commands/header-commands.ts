@@ -7,7 +7,7 @@
 // File Name     : header-commands.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:36:43 (by root)
+// Last Updated  : 2025-09-08 07:35:25 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -339,6 +339,9 @@ export class HeaderCommands {
 
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
     
+    // Extract existing preserved content
+    const existingHeader = this.extractHeaderContent(doc, headerBounds, comment);
+    
     // Generate new header
     const templateManager = TemplateManager.getInstance(this.extensionPath);
     const variableResolver = new VariableResolver();
@@ -349,9 +352,12 @@ export class HeaderCommands {
       throw new Error('No header template found. Please check your configuration.');
     }
     
-    const newHeader = headerTemplateLines.map(line => 
+    let newHeader = headerTemplateLines.map(line => 
       variableResolver.interpolateTemplate(line, variables)
     ).join('\n');
+
+    // Preserve existing content in specific sections
+    newHeader = this.preserveExistingContent(newHeader, existingHeader, comment);
 
     // Replace existing header
     const headerRange = new vscode.Range(
@@ -403,5 +409,133 @@ export class HeaderCommands {
     }
     
     return { start: startLine, end: endLine };
+  }
+
+  /**
+   * Extract content from existing header sections
+   */
+  private extractHeaderContent(doc: vscode.TextDocument, headerBounds: { start: number; end: number }, comment: string): { description: string[]; fileHistory: string[]; todoList: string[] } {
+    const lines = doc.getText().split(/\r?\n/);
+    const headerLines = lines.slice(headerBounds.start, headerBounds.end + 1);
+    
+    const result = {
+      description: [] as string[],
+      fileHistory: [] as string[],
+      todoList: [] as string[]
+    };
+
+    let currentSection: 'none' | 'description' | 'fileHistory' | 'todoList' = 'none';
+    
+    for (const line of headerLines) {
+      // Check for section headers
+      if (line.includes('Description')) {
+        currentSection = 'description';
+        continue;
+      } else if (line.includes('File History')) {
+        currentSection = 'fileHistory';
+        continue;
+      } else if (line.includes('To-Do List')) {
+        currentSection = 'todoList';
+        continue;
+      } else if (line.includes('----')) {
+        // Separator line - reset section
+        currentSection = 'none';
+        continue;
+      }
+
+      // Collect content based on current section
+      if (currentSection !== 'none') {
+        const cleanLine = line.replace(new RegExp(`^\\s*${comment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`), '').trim();
+        
+        // Skip empty lines and template placeholders
+        if (cleanLine && 
+            !cleanLine.includes('${') && 
+            !cleanLine.includes('(v0') && 
+            !cleanLine.includes('(ToDo#') && 
+            cleanLine !== 'Description' &&
+            cleanLine !== 'File History :' &&
+            cleanLine !== 'To-Do List   :') {
+          
+          result[currentSection].push(line);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Preserve existing content in new header
+   */
+  private preserveExistingContent(newHeader: string, existingContent: { description: string[]; fileHistory: string[]; todoList: string[] }, comment: string): string {
+    const newHeaderLines = newHeader.split('\n');
+    const result: string[] = [];
+    
+    let inDescriptionSection = false;
+    let inFileHistorySection = false;
+    let inTodoSection = false;
+    
+    for (const line of newHeaderLines) {
+      // Check for section starts
+      if (line.includes('Description') && line.includes(':')) {
+        inDescriptionSection = true;
+        inFileHistorySection = false;
+        inTodoSection = false;
+        result.push(line);
+        
+        // Add existing description content if available
+        if (existingContent.description.length > 0) {
+          result.push(`${comment}`);
+          result.push(...existingContent.description);
+          result.push(`${comment}`);
+          continue;
+        }
+      } else if (line.includes('File History') && line.includes(':')) {
+        inDescriptionSection = false;
+        inFileHistorySection = true;
+        inTodoSection = false;
+        result.push(line);
+        
+        // Add existing file history content if available
+        if (existingContent.fileHistory.length > 0) {
+          result.push(...existingContent.fileHistory);
+          continue;
+        }
+      } else if (line.includes('To-Do List') && line.includes(':')) {
+        inDescriptionSection = false;
+        inFileHistorySection = false;
+        inTodoSection = true;
+        result.push(line);
+        
+        // Add existing todo content if available
+        if (existingContent.todoList.length > 0) {
+          result.push(...existingContent.todoList);
+          continue;
+        }
+      } else if (line.includes('----')) {
+        // Separator line - end all sections
+        inDescriptionSection = false;
+        inFileHistorySection = false;
+        inTodoSection = false;
+        result.push(line);
+      } else {
+        // Regular content line
+        if (inDescriptionSection && existingContent.description.length > 0) {
+          // Skip template description content
+          continue;
+        } else if (inFileHistorySection && existingContent.fileHistory.length > 0) {
+          // Skip template file history content
+          continue;
+        } else if (inTodoSection && existingContent.todoList.length > 0) {
+          // Skip template todo content
+          continue;
+        } else {
+          // Keep the line
+          result.push(line);
+        }
+      }
+    }
+    
+    return result.join('\n');
   }
 }
