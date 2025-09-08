@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -49,7 +49,7 @@
         "beomHeader.authorEmail": {
           "type": "string",
           "description": "Author's email address",
-          "default": "<username>@example.com"
+          "default": "username@example.com"
         },
         "beomHeader.authorFullName": {
           "type": "string",
@@ -68,8 +68,8 @@
         },
         "beomHeader.copyrightNotice": {
           "type": "string",
-          "description": "Copyright notice format (use ${startYear}, ${endYear}, ${company})",
-          "default": "(C) Copyright ${startYear}-${endYear} ${company}"
+          "description": "Copyright notice format (use ${startYear}, ${endYear}, ${companyName})",
+          "default": "(C) Copyright ${startYear}-${endYear} ${companyName}"
         },
         "beomHeader.licenseType": {
           "type": "string",

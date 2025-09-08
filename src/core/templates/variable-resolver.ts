@@ -7,7 +7,7 @@
 // File Name     : variable-resolver.ts
 // Author        : seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:58:53 (by root)
+// Last Updated  : 2025-09-08 07:04:52 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -47,7 +47,8 @@ export class VariableResolver {
     const editorConfig = this.getEditorConfig(document);
     const licenseInfo = this.getLicenseInfo(config);
     
-    const startYear = config.get<string>('beomHeader.copyrightStartYears', '');
+    // Get startYear - VS Code should use package.json default automatically
+    const startYear = config.get<string>('copyrightStartYears', '<Error>');
     const endYear = getCurrentYear();
     const today = getTodayFormatted();
     const lastModifiedDate = getCurrentTimestamp();
@@ -61,9 +62,9 @@ export class VariableResolver {
       separator: separator.substring((getCommentToken(document.languageId).single || '//').length),
       
       // Project information
-      projectName: config.get<string>('beomHeader.projectName', ''),
+      projectName: config.get<string>('projectName', '<Error>'),
       projectDescription: this.getProjectDescription(config),
-      companyName: config.get<string>('beomHeader.companyName', ''),
+      companyName: config.get<string>('companyName', '<Error>'),
       
       // File information
       fileName: fileInfo.name,
@@ -78,7 +79,7 @@ export class VariableResolver {
       authorFullName: authorInfo.fullName,
       authorTitle: authorInfo.title,
       authorWithTitle: this.formatAuthorWithTitle(authorInfo),
-      teamName: config.get<string>('beomHeader.teamName', ''),
+      teamName: config.get<string>('teamName', '<Error>'),
       
       // Date and time
       today,
@@ -92,7 +93,7 @@ export class VariableResolver {
       // Required core fields
       creationDate: today,
       description: this.getProjectDescription(config),
-      copyright: this.getCopyrightNotice(config, { startYear, endYear, companyName: config.get<string>('beomHeader.companyName', ''), author: authorInfo.name }),
+      copyright: this.getCopyrightNotice(config, { startYear, endYear, companyName: config.get<string>('companyName', '<Error>'), author: authorInfo.name }),
       fileHistory: '',
       todoList: '',
       authorWithEmail: this.formatAuthorWithEmail(authorInfo),
@@ -101,7 +102,7 @@ export class VariableResolver {
       editorInfo: this.formatEditorInfo(editorConfig),
       
       // Legal information
-      copyrightNotice: this.getCopyrightNotice(config, { startYear, endYear, companyName: config.get<string>('beomHeader.companyName', ''), author: authorInfo.name }),
+      copyrightNotice: this.getCopyrightNotice(config, { startYear, endYear, companyName: config.get<string>('companyName', '<Error>'), author: authorInfo.name }),
       licenseText: licenseInfo.text,
       licenseType: licenseInfo.type,
       licenseUrl: licenseInfo.url,
@@ -139,9 +140,9 @@ export class VariableResolver {
    * Get author information from configuration
    */
   private getAuthorInfo(config: vscode.WorkspaceConfiguration): AuthorInfo {
-    const authorFullName = config.get<string>('beomHeader.authorFullName', '');
-    const authorEmail = config.get<string>('beomHeader.authorEmail', '');
-    const authorTitle = config.get<string>('beomHeader.authorTitle', '');
+    const authorFullName = config.get<string>('authorFullName', '<Error>');
+    const authorEmail = config.get<string>('authorEmail', '<Error>');
+    const authorTitle = config.get<string>('authorTitle', '<Error>');
     const systemUsername = os.userInfo().username;
     
     return {
@@ -177,9 +178,9 @@ export class VariableResolver {
    * Get license information
    */
   private getLicenseInfo(config: vscode.WorkspaceConfiguration): { text: string; type: string; url: string } {
-    const licenseType = config.get<string>('beomHeader.licenseType', 'All Rights Reserved');
-    const customLicenseText = config.get<string>('beomHeader.customLicenseText', '');
-    const licenseUrl = config.get<string>('beomHeader.licenseUrl', '');
+    const licenseType = config.get<string>('licenseType', '<Error>');
+    const customLicenseText = config.get<string>('customLicenseText', '<Error>');
+    const licenseUrl = config.get<string>('licenseUrl', '<Error>');
     
     const licenseTexts: Record<string, string> = {
       'All Rights Reserved': 'All Rights Reserved',
@@ -197,8 +198,8 @@ export class VariableResolver {
     };
     
     const text = licenseType === 'Custom' 
-      ? (customLicenseText || 'All Rights Reserved')
-      : (licenseTexts[licenseType] || 'All Rights Reserved');
+      ? (customLicenseText || '<Error>')
+      : (licenseTexts[licenseType] || '<Error>');
     
     return { text, type: licenseType, url: licenseUrl };
   }
@@ -207,8 +208,8 @@ export class VariableResolver {
    * Generate separator line
    */
   private generateSeparator(config: vscode.WorkspaceConfiguration): string {
-    const separatorLength = config.get<number>('beomHeader.separatorLength', 70);
-    const separatorChar = config.get<string>('beomHeader.separatorChar', '-');
+    const separatorLength = config.get<number>('separatorLength', 70);
+    const separatorChar = config.get<string>('separatorChar', '<Error>');
     
     return generateSeparator(separatorChar, separatorLength);
   }
@@ -241,8 +242,8 @@ export class VariableResolver {
    * Get project description with variable interpolation
    */
   private getProjectDescription(config: vscode.WorkspaceConfiguration): string {
-    const template = config.get<string>('beomHeader.projectDescription', 'This module provides core functionality for the ${projectName} application');
-    const projectName = config.get<string>('beomHeader.projectName', '');
+    const template = config.get<string>('projectDescription', '<Error>');
+    const projectName = config.get<string>('projectName', '<Error>');
     return interpolateTemplate(template, { projectName });
   }
 
@@ -250,7 +251,7 @@ export class VariableResolver {
    * Get copyright notice with variable interpolation
    */
   private getCopyrightNotice(config: vscode.WorkspaceConfiguration, vars: Record<string, string>): string {
-    const template = config.get<string>('beomHeader.copyrightNotice', '(C) Copyright ${startYear}-${endYear} ${companyName}');
+    const template = config.get<string>('copyrightNotice', '<Error>');
     return interpolateTemplate(template, vars);
   }
 

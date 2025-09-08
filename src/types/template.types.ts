@@ -1,21 +1,25 @@
-//----------------------------------------------------------------------
-// (C) Copyright 2023-2025 Seongbeom
+//--------------------------------------------------------------------
+// (C) Copyright -2025 
 //
 // All Rights Reserved
 //
-// Project Name  : VS Code Extension
+// Project Name  : 
 // File Name     : template.types.ts
-// Author        : seongbeom
+// Author        : root
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:53:23 (by root)
-// Editor        : Visual Studio Code, space size (2)
+// Last Updated  : 2025-09-08 07:04:52 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
-//     This file defines TypeScript types for template system.
-//        o Template variable definitions
-//        o Template structure interfaces
+//     This module provides core functionality for the  application
+//        o 
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/09/08 : (v01p00,  root) First Release by 'root'
+// To-Do List   :
+//      * 2025/09/08 : (ToDo#00, root) None
+//--------------------------------------------------------------------
 
 /**
  * Comment token structure
