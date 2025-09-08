@@ -1,6 +1,6 @@
 # Beom Header
 
-![Version](https://img.shields.io/badge/version-3.0.2-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-3.0.3-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 Insert standardized file headers for various file types in Visual Studio Code, with comprehensive configuration options, auto-update features, and modular architecture.
 
