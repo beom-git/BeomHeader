@@ -7,8 +7,8 @@
 // File Name     : template-manager.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Last Updated : 2025-09-08 04:28:04 (by root)
+// Editor       : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file manages template loading and selection for the BeomHeader extension.
@@ -54,7 +54,33 @@ export class TemplateManager {
    */
   private loadTemplates(): void {
     try {
-      const templatesDir = path.join(this.extensionPath, 'src', 'assets', 'templates');
+      // Try multiple possible paths for templates
+      let templatesDir: string;
+      
+      // Development environment path
+      const devPath = path.join(this.extensionPath, 'src', 'assets', 'templates');
+      // Production environment path (compiled)
+      const prodPath = path.join(this.extensionPath, 'out', 'src', 'assets', 'templates');
+      // Alternative production path
+      const altProdPath = path.join(this.extensionPath, 'assets', 'templates');
+      
+      if (fs.existsSync(devPath)) {
+        templatesDir = devPath;
+        console.log('📁 Loading templates from development path:', templatesDir);
+      } else if (fs.existsSync(prodPath)) {
+        templatesDir = prodPath;
+        console.log('📁 Loading templates from production path:', templatesDir);
+      } else if (fs.existsSync(altProdPath)) {
+        templatesDir = altProdPath;
+        console.log('📁 Loading templates from alternative path:', templatesDir);
+      } else {
+        console.error('❌ No templates directory found. Checked paths:');
+        console.error('  - Dev path:', devPath);
+        console.error('  - Prod path:', prodPath);
+        console.error('  - Alt path:', altProdPath);
+        this.setDefaultTemplates();
+        return;
+      }
       
       // Load header body templates
       this.loadHeaderBodyTemplates(templatesDir);
@@ -65,8 +91,10 @@ export class TemplateManager {
       // Load todo entry templates
       this.loadTodoEntryTemplates(templatesDir);
       
+      console.log('✅ Templates loaded successfully');
+      
     } catch (error) {
-      console.error('Failed to load templates:', error);
+      console.error('❌ Failed to load templates:', error);
       this.setDefaultTemplates();
     }
   }
@@ -76,9 +104,13 @@ export class TemplateManager {
    */
   private loadHeaderBodyTemplates(templatesDir: string): void {
     const headerFile = path.join(templatesDir, 'headerBodyTemplate.json');
+    console.log('📄 Loading header body templates from:', headerFile);
     if (fs.existsSync(headerFile)) {
       const headerContent = fs.readFileSync(headerFile, 'utf8');
       this.headerTemplates = JSON.parse(headerContent);
+      console.log('✅ Header body templates loaded. Available styles:', Object.keys(this.headerTemplates));
+    } else {
+      console.error('❌ Header body template file not found:', headerFile);
     }
   }
 
@@ -200,7 +232,18 @@ export class TemplateManager {
    */
   public getHeaderBodyTemplate(config: vscode.WorkspaceConfiguration): string[] {
     const headerStyle = config.get<HeaderStyle>('headerStyle', 'standard');
-    return this.headerTemplates[headerStyle] || this.headerTemplates.standard || [];
+    console.log('📋 getHeaderBodyTemplate: Requested style:', headerStyle);
+    console.log('📋 Available template styles:', Object.keys(this.headerTemplates));
+    
+    const template = this.headerTemplates[headerStyle] || this.headerTemplates.standard || [];
+    console.log('📋 Selected template lines count:', template.length);
+    
+    if (template.length === 0) {
+      console.error('❌ No template found for style:', headerStyle);
+      console.error('❌ Available templates:', this.headerTemplates);
+    }
+    
+    return template;
   }
 
   /**

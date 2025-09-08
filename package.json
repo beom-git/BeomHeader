@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -276,7 +276,8 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && npm run copy-assets",
+    "copy-assets": "mkdir -p out/src/assets/templates && cp src/assets/templates/*.json out/src/assets/templates/",
     "watch": "tsc -watch -p ./",
     "package": "vsce package",
     "publish": "vsce publish",
