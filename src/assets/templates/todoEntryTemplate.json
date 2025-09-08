@@ -1,0 +1,6 @@
+{
+  "standard": "${comment}      * ${today} : (ToDo#${index}, ${author}) Description\n",
+  "detailed": "${comment}      * ${today} : (ToDo#${index}, ${authorName}) Description\n${comment}                   Priority: [High/Medium/Low]\n${comment}                   Estimated: [Time]\n",
+  "minimal":  "${comment}      * ToDo#${index}: Description - ${author}\n",
+  "kanban":   "${comment}      * ${today} : [TODO] #${index} - Description (${author})\n"
+}

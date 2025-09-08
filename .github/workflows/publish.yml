@@ -12,26 +12,37 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.17.0]
     steps:
 
       # 1. Check out your code
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # 2. Set up Node.js and cache npm
-      - uses: actions/setup-node@v3
+      # 2. Set up Node.js
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
-          # cache: 'npm'
+          node-version: ${{ matrix.node-version }}
 
       # 3. Install dependencies & compile TypeScript
       - run: npm install
       - run: npm run compile
 
-      # 4. Install vsce (VS Code Extension CLI)
-      - run: npm install -g vsce
-
-      # 5. Publish to the Marketplace
+      # 4. Install vsce locally and publish
+      - name: Install vsce locally
+        run: |
+          npm install @vscode/vsce@latest
+        
+      # 5. Verify Node.js and vsce versions
+      - name: Verify versions
+        run: |
+          node --version
+          npm --version
+          npx vsce --version
+        
+      # 6. Publish to the Marketplace
       - name: Publish Extension
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: vsce publish
+        run: npx vsce publish

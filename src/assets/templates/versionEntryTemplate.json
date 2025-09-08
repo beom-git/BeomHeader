@@ -1,0 +1,6 @@
+{
+  "standard": "${comment}      * ${today} : (${version},  ${author}) Description\n",
+  "detailed": "${comment}      * ${today} : (${version},  ${authorName}) Description\n${comment}                   - Changed: \n${comment}                   - Added: \n${comment}                   - Fixed: \n",
+  "minimal":  "${comment}      * ${today} : ${version} - ${author}\n",
+  "semantic": "${comment}      * ${today} : Version ${version} by ${author}\n${comment}                   Changes: Description\n"
+}
