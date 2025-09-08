@@ -5,22 +5,22 @@
 //
 // Project Name  : VS Code Extension
 // File Name     : extension.ts
-// Author        : Seongbeom (lub8881@kakao.com)
-// First Created : 2025/05/07
-// Last Updated  : 2025-09-08 05:28:23 (by root)
-// Editor        : Visual Studio Code, tab size (4)
+// Author        : seongbeom - SoC Designer <lub8881@kakao.com>
+// First Created : 2025/09/08
+// Last Updated  : 2025-09-08 07:20:25 (by root)
+// Editor        : Visual Studio Code, space size (2)
 // Description   : 
 //
-//     This module 
-//        o 
+//     This module provides core functionality for the VS Code extension
+//        o The main activation and deactivation functions
+//        o Command registration
+//        o Initialization of core components
 //
 //--------------------------------------------------------------------
 // File History :
-//      * 2025/05/07 : (v01p00,  Seongbeom) First Release by 'Seongbeom'
-//      * 2025/09/08 : (v02p00,  Seongbeom) Add the function to Last Updated automatically
-//      * 2025/09/08 : (v03p00,  Seongbeom) Update the code structure 
+//      * 2025/09/08 : (v01p00,  seongbeom) First Release by 'seongbeom'
 // To-Do List   :
-//      * 2025/09/08 : (ToDo#00, Seongbeom) None
+//      * 2025/09/08 : (ToDo#00, seongbeom) None
 //--------------------------------------------------------------------
 
 import * as vscode from 'vscode';
