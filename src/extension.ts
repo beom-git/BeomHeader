@@ -1,22 +1,3 @@
-//----------------------------------------------------------------------
-// (C) Copyright 2023-2025 Seongbeom
-//
-// All Rights Reserved
-//
-// Project Name  : VS Code Extension
-// File Name     : extension.ts
-// Author        : seongbeom
-// First Created : 2025/05/07
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
-// Description   : 
-//
-//     This file contains the main entry point for the Beom Header extension.
-//        o Registers all extension commands
-//        o Initializes modular components
-//        o Manages extension lifecycle
-//
-//----------------------------------------------------------------------
 
 import * as vscode from 'vscode';
 import { HeaderCommands } from './core/commands/header-commands';

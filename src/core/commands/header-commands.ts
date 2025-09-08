@@ -62,32 +62,59 @@ export class HeaderCommands {
    * Insert file header command
    */
   private async insertFileHeader(): Promise<void> {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) return;
+    try {
+      console.log('insertFileHeader: Starting...');
+      
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        console.log('insertFileHeader: No active editor');
+        vscode.window.showErrorMessage('No active editor found');
+        return;
+      }
 
-    const doc = editor.document;
-    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const commentToken = getCommentToken(`.${doc.languageId}`);
-    const comment = commentToken.single || '//';
+      const doc = editor.document;
+      const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+      const commentToken = getCommentToken(`.${doc.languageId}`);
+      const comment = commentToken.single || '//';
 
-    // Prevent duplicate insertion
-    const snippet = doc.getText(new vscode.Range(0, 0, 20, 0));
-    const separatorLine = `${comment}-----------------------------------------------------`;
-    if (snippet.includes(separatorLine)) {
-      vscode.window.showInformationMessage('Header already exists. Skipping insertion.');
-      return;
+      console.log('insertFileHeader: Language:', doc.languageId, 'Comment:', comment);
+
+      // Prevent duplicate insertion
+      const snippet = doc.getText(new vscode.Range(0, 0, 20, 0));
+      const separatorLine = `${comment}-----------------------------------------------------`;
+      if (snippet.includes(separatorLine)) {
+        vscode.window.showInformationMessage('Header already exists. Skipping insertion.');
+        return;
+      }
+
+      console.log('insertFileHeader: Getting template manager...');
+      
+      // Generate header
+      const templateManager = TemplateManager.getInstance(this.extensionPath);
+      const variableResolver = new VariableResolver();
+      const variables = variableResolver.resolveVariables(doc, config, this.extensionPath);
+      
+      console.log('insertFileHeader: Variables resolved:', Object.keys(variables));
+      
+      const headerTemplateLines = templateManager.getHeaderBodyTemplate(config);
+      
+      console.log('insertFileHeader: Template lines count:', headerTemplateLines.length);
+      
+      const header = headerTemplateLines.map(line => 
+        variableResolver.interpolateTemplate(line, variables)
+      ).join('\n');
+
+      console.log('insertFileHeader: Generated header preview:', header.substring(0, 100) + '...');
+
+      await editor.edit(e => e.insert(new vscode.Position(0, 0), header));
+      
+      console.log('insertFileHeader: Header inserted successfully');
+      vscode.window.showInformationMessage('File header inserted successfully!');
+      
+    } catch (error) {
+      console.error('insertFileHeader: Error occurred:', error);
+      vscode.window.showErrorMessage(`Failed to insert header: ${error}`);
     }
-
-    // Generate header
-    const templateManager = TemplateManager.getInstance(this.extensionPath);
-    const variableResolver = new VariableResolver();
-    const variables = variableResolver.resolveVariables(doc, config, this.extensionPath);
-    const headerTemplateLines = templateManager.getHeaderBodyTemplate(config);
-    const header = headerTemplateLines.map(line => 
-      variableResolver.interpolateTemplate(line, variables)
-    ).join('\n');
-
-    await editor.edit(e => e.insert(new vscode.Position(0, 0), header));
   }
 
   /**
