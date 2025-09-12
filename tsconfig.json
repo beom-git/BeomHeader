@@ -5,9 +5,11 @@
 	  "outDir": "out",
 	  "rootDir": "src",
 	  "sourceMap": true,
-	  "types": ["mocha", "node"]
+	  "types": ["mocha", "node"],
+	  "esModuleInterop": true,
+	  "typeRoots": ["node_modules/@types", "src/types"],
+	  "baseUrl": "./src"
 	},
 	"exclude": ["node_modules", ".vscode-test"],
 	"include": ["src", "src/test"]
   }
-  

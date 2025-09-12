@@ -117,6 +117,13 @@ export class ConfigCommands {
         await this.listLanguageExtensionMappings();
       })
     );
+
+    // Configure Project Name
+    context.subscriptions.push(
+      vscode.commands.registerCommand('fileHeader.configureProjectName', async () => {
+        await this.configureProjectName();
+      })
+    );
   }
 
   /**
@@ -777,5 +784,23 @@ export class ConfigCommands {
     });
     
     await vscode.window.showTextDocument(doc);
+  }
+
+  /**
+   * Configure project name
+   */
+  private async configureProjectName(): Promise<void> {
+    const newName = await vscode.window.showInputBox({
+      prompt: 'Enter the new project name',
+      placeHolder: 'New Project Name'
+    });
+
+    if (newName) {
+      const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+      await config.update('projectName', newName, vscode.ConfigurationTarget.Workspace);
+      vscode.window.showInformationMessage(`Project name updated to: ${newName}`);
+    } else {
+      vscode.window.showWarningMessage('Project name change was cancelled.');
+    }
   }
 }

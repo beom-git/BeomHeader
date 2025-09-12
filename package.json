@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -125,7 +125,12 @@
           "beomHeader.headerStyle": {
             "type": "string",
             "description": "Header template style",
-            "enum": ["standard", "minimal", "detailed", "custom"],
+            "enum": [
+              "standard",
+              "minimal",
+              "detailed",
+              "custom"
+            ],
             "default": "standard"
           },
           "beomHeader.separatorLength": {
@@ -138,7 +143,15 @@
           "beomHeader.separatorChar": {
             "type": "string",
             "description": "Character used for header separator lines",
-            "enum": ["-", "=", "*", "#", "~", "+", "_"],
+            "enum": [
+              "-",
+              "=",
+              "*",
+              "#",
+              "~",
+              "+",
+              "_"
+            ],
             "default": "-"
           },
           "beomHeader.includeEmptyLines": {
@@ -317,96 +330,353 @@
               }
             },
             "default": {
-              "typescript": [".ts", ".tsx"],
-              "javascript": [".js", ".jsx", ".mjs", ".cjs"],
-              "typescriptreact": [".tsx"],
-              "javascriptreact": [".jsx"],
-              "python": [".py", ".pyw", ".pyi"],
-              "java": [".java"],
-              "c": [".c", ".h"],
-              "cpp": [".cpp", ".cc", ".cxx", ".c++", ".hpp", ".hh", ".hxx", ".h++"],
-              "csharp": [".cs"],
-              "go": [".go"],
-              "rust": [".rs"],
-              "swift": [".swift"],
-              "kotlin": [".kt", ".kts"],
-              "scala": [".scala", ".sc"],
-              "ruby": [".rb", ".rbw"],
-              "perl": [".pl", ".pm", ".t"],
-              "shell": [".sh"],
-              "shellscript": [".sh", ".bash", ".zsh", ".fish"],
-              "bash": [".bash", ".sh"],
-              "powershell": [".ps1", ".psm1", ".psd1"],
-              "r": [".r", ".R"],
-              "html": [".html", ".htm", ".xhtml"],
-              "xml": [".xml", ".xsd", ".xsl", ".xslt"],
-              "css": [".css"],
-              "scss": [".scss"],
-              "sass": [".sass"],
-              "less": [".less"],
-              "stylus": [".styl"],
-              "haskell": [".hs", ".lhs"],
-              "ocaml": [".ml", ".mli"],
-              "fsharp": [".fs", ".fsi", ".fsx"],
-              "clojure": [".clj", ".cljs", ".cljc"],
-              "lisp": [".lisp", ".lsp"],
-              "sql": [".sql", ".pgsql", ".mysql"],
-              "markdown": [".md", ".markdown", ".mdown", ".mkd"],
-              "tex": [".tex", ".latex"],
-              "yaml": [".yml", ".yaml"],
-              "toml": [".toml"],
-              "ini": [".ini", ".cfg", ".conf"],
-              "vim": [".vim", ".vimrc"],
-              "lua": [".lua"],
-              "matlab": [".m"],
-              "julia": [".jl"],
-              "dart": [".dart"],
-              "php": [".php", ".phtml", ".php3", ".php4", ".php5"],
-              "elixir": [".ex", ".exs"],
-              "erlang": [".erl", ".hrl"],
-              "assembly": [".asm", ".s", ".S"],
-              "makefile": ["Makefile", "makefile", ".mk"],
-              "dockerfile": ["Dockerfile", ".dockerfile"],
-              "json": [".json", ".jsonc"],
-              "jsonc": [".jsonc"],
-              "properties": [".properties"],
-              "gitignore": [".gitignore"],
-              "ignore": [".ignore", ".eslintignore", ".prettierignore"]
+              "typescript": [
+                ".ts",
+                ".tsx"
+              ],
+              "javascript": [
+                ".js",
+                ".jsx",
+                ".mjs",
+                ".cjs"
+              ],
+              "typescriptreact": [
+                ".tsx"
+              ],
+              "javascriptreact": [
+                ".jsx"
+              ],
+              "python": [
+                ".py",
+                ".pyw",
+                ".pyi"
+              ],
+              "java": [
+                ".java"
+              ],
+              "c": [
+                ".c",
+                ".h"
+              ],
+              "cpp": [
+                ".cpp",
+                ".cc",
+                ".cxx",
+                ".c++",
+                ".hpp",
+                ".hh",
+                ".hxx",
+                ".h++"
+              ],
+              "csharp": [
+                ".cs"
+              ],
+              "go": [
+                ".go"
+              ],
+              "rust": [
+                ".rs"
+              ],
+              "swift": [
+                ".swift"
+              ],
+              "kotlin": [
+                ".kt",
+                ".kts"
+              ],
+              "scala": [
+                ".scala",
+                ".sc"
+              ],
+              "ruby": [
+                ".rb",
+                ".rbw"
+              ],
+              "perl": [
+                ".pl",
+                ".pm",
+                ".t"
+              ],
+              "shell": [
+                ".sh"
+              ],
+              "shellscript": [
+                ".sh",
+                ".bash",
+                ".zsh",
+                ".fish"
+              ],
+              "bash": [
+                ".bash",
+                ".sh"
+              ],
+              "powershell": [
+                ".ps1",
+                ".psm1",
+                ".psd1"
+              ],
+              "r": [
+                ".r",
+                ".R"
+              ],
+              "html": [
+                ".html",
+                ".htm",
+                ".xhtml"
+              ],
+              "xml": [
+                ".xml",
+                ".xsd",
+                ".xsl",
+                ".xslt"
+              ],
+              "css": [
+                ".css"
+              ],
+              "scss": [
+                ".scss"
+              ],
+              "sass": [
+                ".sass"
+              ],
+              "less": [
+                ".less"
+              ],
+              "stylus": [
+                ".styl"
+              ],
+              "haskell": [
+                ".hs",
+                ".lhs"
+              ],
+              "ocaml": [
+                ".ml",
+                ".mli"
+              ],
+              "fsharp": [
+                ".fs",
+                ".fsi",
+                ".fsx"
+              ],
+              "clojure": [
+                ".clj",
+                ".cljs",
+                ".cljc"
+              ],
+              "lisp": [
+                ".lisp",
+                ".lsp"
+              ],
+              "sql": [
+                ".sql",
+                ".pgsql",
+                ".mysql"
+              ],
+              "markdown": [
+                ".md",
+                ".markdown",
+                ".mdown",
+                ".mkd"
+              ],
+              "tex": [
+                ".tex",
+                ".latex"
+              ],
+              "yaml": [
+                ".yml",
+                ".yaml"
+              ],
+              "toml": [
+                ".toml"
+              ],
+              "ini": [
+                ".ini",
+                ".cfg",
+                ".conf"
+              ],
+              "vim": [
+                ".vim",
+                ".vimrc"
+              ],
+              "lua": [
+                ".lua"
+              ],
+              "matlab": [
+                ".m"
+              ],
+              "julia": [
+                ".jl"
+              ],
+              "dart": [
+                ".dart"
+              ],
+              "php": [
+                ".php",
+                ".phtml",
+                ".php3",
+                ".php4",
+                ".php5"
+              ],
+              "elixir": [
+                ".ex",
+                ".exs"
+              ],
+              "erlang": [
+                ".erl",
+                ".hrl"
+              ],
+              "assembly": [
+                ".asm",
+                ".s",
+                ".S"
+              ],
+              "makefile": [
+                "Makefile",
+                "makefile",
+                ".mk"
+              ],
+              "dockerfile": [
+                "Dockerfile",
+                ".dockerfile"
+              ],
+              "json": [
+                ".json",
+                ".jsonc"
+              ],
+              "jsonc": [
+                ".jsonc"
+              ],
+              "properties": [
+                ".properties"
+              ],
+              "gitignore": [
+                ".gitignore"
+              ],
+              "ignore": [
+                ".ignore",
+                ".prettierignore"
+              ]
             }
           }
         }
       }
     ],
     "commands": [
-      { "command": "fileHeader.insert", "title": "Beom Header: Create New Header" },
-      { "command": "fileHeader.insertVersion", "title": "Beom Header: Add Version History Entry" },
-      { "command": "fileHeader.insertTodo", "title": "Beom Header: Add TODO Item" },
-      { "command": "fileHeader.addLanguageMapping", "title": "Beom Header: Add Comment Token for Language" },
-      { "command": "fileHeader.removeLanguageMapping", "title": "Beom Header: Remove Comment Token for Language" },
-      { "command": "fileHeader.listLanguageMappings", "title": "Beom Header: View All Comment Token Mappings" },
-      { "command": "fileHeader.addLanguageExtensionMapping", "title": "Beom Header: Add File Extension Mapping" },
-      { "command": "fileHeader.removeLanguageExtensionMapping", "title": "Beom Header: Remove File Extension Mapping" },
-      { "command": "fileHeader.listLanguageExtensionMappings", "title": "Beom Header: View All Extension Mappings" },
-      { "command": "fileHeader.configureFilePath", "title": "Beom Header: Set File Path Display Options" },
-      { "command": "fileHeader.configurePathSeparator", "title": "Beom Header: Set Path Separator Character" },
-      { "command": "fileHeader.configureLicense", "title": "Beom Header: Set License Type" },
-      { "command": "fileHeader.configureLicenseUrl", "title": "Beom Header: Set License URL" },
-      { "command": "fileHeader.configureCopyrightNotice", "title": "Beom Header: Set Copyright Notice Format" },
-      { "command": "fileHeader.toggleLicenseHeader", "title": "Beom Header: Enable/Disable License in Headers" },
-      { "command": "fileHeader.configureVersionFormat", "title": "Beom Header: Set Version Number Format" },
-      { "command": "fileHeader.configureAuthorInfo", "title": "Beom Header: Set Author Information" },
-      { "command": "fileHeader.configureHeaderStyle", "title": "Beom Header: Set Header Template Style" },
-      { "command": "fileHeader.toggleAutoIncrementVersion", "title": "Beom Header: Enable/Disable Auto Version Increment" },
-      { "command": "fileHeader.selectHeaderStyle", "title": "Beom Header: Choose Header Template Style" },
-      { "command": "fileHeader.configureProjectDescription", "title": "Beom Header: Set Project Description Template" },
-      { "command": "fileHeader.toggleAutoUpdateLastModified", "title": "Beom Header: Enable/Disable Auto Timestamp Update" },
-      { "command": "fileHeader.toggleAutoUpdateEditor", "title": "Beom Header: Enable/Disable Auto Editor Info Update" },
-      { "command": "fileHeader.cleanupDuplicateLastEntries", "title": "Beom Header: Remove Duplicate History Entries" },
-      { "command": "fileHeader.updateCurrentHeader", "title": "Beom Header: Refresh Current File Header" },
-      { "command": "fileHeader.updateAllHeaders", "title": "Beom Header: Refresh All Workspace Headers" }
+      {
+        "command": "fileHeader.insert",
+        "title": "Beom Header: Create New Header"
+      },
+      {
+        "command": "fileHeader.insertVersion",
+        "title": "Beom Header: Add Version History Entry"
+      },
+      {
+        "command": "fileHeader.insertTodo",
+        "title": "Beom Header: Add TODO Item"
+      },
+      {
+        "command": "fileHeader.addLanguageMapping",
+        "title": "Beom Header: Add Comment Token for Language"
+      },
+      {
+        "command": "fileHeader.removeLanguageMapping",
+        "title": "Beom Header: Remove Comment Token for Language"
+      },
+      {
+        "command": "fileHeader.listLanguageMappings",
+        "title": "Beom Header: View All Comment Token Mappings"
+      },
+      {
+        "command": "fileHeader.addLanguageExtensionMapping",
+        "title": "Beom Header: Add File Extension Mapping"
+      },
+      {
+        "command": "fileHeader.removeLanguageExtensionMapping",
+        "title": "Beom Header: Remove File Extension Mapping"
+      },
+      {
+        "command": "fileHeader.listLanguageExtensionMappings",
+        "title": "Beom Header: View All Extension Mappings"
+      },
+      {
+        "command": "fileHeader.configureFilePath",
+        "title": "Beom Header: Set File Path Display Options"
+      },
+      {
+        "command": "fileHeader.configurePathSeparator",
+        "title": "Beom Header: Set Path Separator Character"
+      },
+      {
+        "command": "fileHeader.configureLicense",
+        "title": "Beom Header: Set License Type"
+      },
+      {
+        "command": "fileHeader.configureLicenseUrl",
+        "title": "Beom Header: Set License URL"
+      },
+      {
+        "command": "fileHeader.configureCopyrightNotice",
+        "title": "Beom Header: Set Copyright Notice Format"
+      },
+      {
+        "command": "fileHeader.toggleLicenseHeader",
+        "title": "Beom Header: Enable/Disable License in Headers"
+      },
+      {
+        "command": "fileHeader.configureVersionFormat",
+        "title": "Beom Header: Set Version Number Format"
+      },
+      {
+        "command": "fileHeader.configureAuthorInfo",
+        "title": "Beom Header: Set Author Information"
+      },
+      {
+        "command": "fileHeader.configureHeaderStyle",
+        "title": "Beom Header: Set Header Template Style"
+      },
+      {
+        "command": "fileHeader.toggleAutoIncrementVersion",
+        "title": "Beom Header: Enable/Disable Auto Version Increment"
+      },
+      {
+        "command": "fileHeader.selectHeaderStyle",
+        "title": "Beom Header: Choose Header Template Style"
+      },
+      {
+        "command": "fileHeader.configureProjectDescription",
+        "title": "Beom Header: Set Project Description Template"
+      },
+      {
+        "command": "fileHeader.toggleAutoUpdateLastModified",
+        "title": "Beom Header: Enable/Disable Auto Timestamp Update"
+      },
+      {
+        "command": "fileHeader.toggleAutoUpdateEditor",
+        "title": "Beom Header: Enable/Disable Auto Editor Info Update"
+      },
+      {
+        "command": "fileHeader.cleanupDuplicateLastEntries",
+        "title": "Beom Header: Remove Duplicate History Entries"
+      },
+      {
+        "command": "fileHeader.updateCurrentHeader",
+        "title": "Beom Header: Refresh Current File Header"
+      },
+      {
+        "command": "fileHeader.updateAllHeaders",
+        "title": "Beom Header: Refresh All Workspace Headers"
+      },
+      {
+        "command": "fileHeader.configureProjectName",
+        "title": "Beom Header: Set Project Name"
+      }
     ],
     "keybindings": [
-      { "command": "fileHeader.insert", "key": "ctrl+alt+h", "when": "editorTextFocus" }
+      {
+        "command": "fileHeader.insert",
+        "key": "ctrl+alt+h",
+        "when": "editorTextFocus"
+      }
     ]
   },
   "scripts": {
@@ -417,19 +687,21 @@
     "package": "vsce package",
     "publish": "vsce publish",
     "test": "npm run compile && node ./out/test/runTest.js",
-    "test-compile": "tsc -p ./",
-    "pretest": "npm run compile",
-    "test-watch": "npm run compile && npm run watch"
+    "pretest": "npm run compile"
   },
   "devDependencies": {
-    "@types/vscode": "^1.80.0",
-    "@types/node": "^18.0.0",
-    "typescript": "^4.9.5",
-    "@vscode/test-electron": "^2.5.2",
+    "@types/chai": "^5.2.2",
+    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^18.0.0",
+    "@types/sinon": "^17.0.4",
+    "@types/vscode": "^1.80.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^2.22.0",
-    "mocha": "^10.2.0",
+    "chai": "^6.0.1",
     "glob": "^10.3.0",
-    "@types/glob": "^8.1.0"
+    "mocha": "^10.2.0",
+    "sinon": "^21.0.0",
+    "typescript": "^5.9.2"
   }
 }

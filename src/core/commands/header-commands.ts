@@ -7,7 +7,7 @@
 // File Name     : header-commands.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 07:35:25 (by root)
+// Last Updated  : 2025-09-12 07:13:13 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -330,7 +330,7 @@ export class HeaderCommands {
     const doc = editor.document;
     const commentToken = getCommentToken(doc.languageId);
     const comment = commentToken.single || '//';
-    
+
     // Find header boundaries
     const headerBounds = this.findHeaderBounds(doc, comment);
     if (!headerBounds) {
@@ -338,20 +338,31 @@ export class HeaderCommands {
     }
 
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    
+
     // Extract existing preserved content
     const existingHeader = this.extractHeaderContent(doc, headerBounds, comment);
-    
+
+    // Preserve the original "First Created" date
+    const originalFirstCreated = existingHeader.description.find(line => line.includes('First Created'));
+    const preservedFirstCreated = originalFirstCreated
+      ? originalFirstCreated.replace(/.*First Created\s*:\s*/, '').trim()
+      : null;
+
     // Generate new header
     const templateManager = TemplateManager.getInstance(this.extensionPath);
     const variableResolver = new VariableResolver();
     const variables = variableResolver.resolveVariables(doc, config, this.extensionPath);
-    
+
+    // Use the preserved "First Created" date if available
+    if (preservedFirstCreated) {
+      variables.today = preservedFirstCreated;
+    }
+
     const headerTemplateLines = templateManager.getHeaderBodyTemplate(config);
     if (headerTemplateLines.length === 0) {
       throw new Error('No header template found. Please check your configuration.');
     }
-    
+
     let newHeader = headerTemplateLines.map(line => 
       variableResolver.interpolateTemplate(line, variables)
     ).join('\n');

@@ -7,8 +7,8 @@
 // File Name     : date-utils.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Updated  : 2025-09-12 07:26:30 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file provides date and time utility functions.
@@ -28,7 +28,7 @@ export function getTodayFormatted(): string {
  * Get current timestamp in YYYY-MM-DD HH:MM:SS format
  */
 export function getCurrentTimestamp(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ').replace(/-/g, '-');
+  return new Date().toISOString().slice(0, 19).replace('T', ' ');
 }
 
 /**

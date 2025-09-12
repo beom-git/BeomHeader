@@ -7,8 +7,8 @@
 // File Name     : string-utils.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 09:00:00 (by seongbeom)
-// Editor        : Visual Studio Code, space size (2)
+// Last Updated  : 2025-09-12 07:26:30 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file contains string manipulation utility functions.
@@ -65,40 +65,4 @@ export function isValidIdentifier(identifier: string): boolean {
  */
 export function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
- * Capitalize first letter of a string
- */
-export function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
-
-/**
- * Convert camelCase to kebab-case
- */
-export function camelToKebab(str: string): string {
-  return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-}
-
-/**
- * Convert kebab-case to camelCase
- */
-export function kebabToCamel(str: string): string {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-}
-
-/**
- * Truncate string to specified length
- */
-export function truncate(str: string, maxLength: number, suffix: string = '...'): string {
-  if (str.length <= maxLength) return str;
-  return str.slice(0, maxLength - suffix.length) + suffix;
-}
-
-/**
- * Remove extra whitespace and normalize line endings
- */
-export function normalizeWhitespace(str: string): string {
-  return str.replace(/\s+/g, ' ').trim();
 }
