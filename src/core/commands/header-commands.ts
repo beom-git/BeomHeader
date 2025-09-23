@@ -192,7 +192,13 @@ export class HeaderCommands {
     const commentToken = getCommentToken(doc.languageId);
     const comment = commentToken.single || '//';
     const author = os.userInfo().username;
-    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
+    const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const today = new Date().toLocaleString('en-CA', {
+      timeZone: currentTimeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/-/g, '/');
 
     // Locate File History section
     const lines = doc.getText().split(/\r?\n/);
@@ -259,7 +265,13 @@ export class HeaderCommands {
     const commentToken = getCommentToken(doc.languageId);
     const comment = commentToken.single || '//';
     const author = os.userInfo().username;
-    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
+    const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const today = new Date().toLocaleString('en-CA', {
+      timeZone: currentTimeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/-/g, '/');
 
     // Locate To-Do List section
     const lines = doc.getText().split(/\r?\n/);

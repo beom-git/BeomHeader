@@ -92,6 +92,13 @@ export class AutoUpdater {
    * Register auto-update event handler
    */
   public register(context: vscode.ExtensionContext): void {
+    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+    const autoUpdateLastModified = config.get<boolean>('beomHeader.autoUpdateLastModified', true);
+    const autoUpdateEditor = config.get<boolean>('beomHeader.autoUpdateEditor', true);
+    if (!autoUpdateLastModified && !autoUpdateEditor) {
+      // Do not register auto-update event if both are disabled
+      return;
+    }
     context.subscriptions.push(
       vscode.workspace.onWillSaveTextDocument(async (event) => {
         await this.updateDocument(event.document);
