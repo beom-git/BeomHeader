@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -721,14 +721,12 @@
     "watch": "tsc -watch -p ./",
     "package": "vsce package",
     "publish": "vsce publish",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test": "npm run compile && node ./out/test/runTest.js",
+    "pretest": "npm run compile"
   },
   "devDependencies": {
     "@types/chai": "^5.2.2",
     "@types/glob": "^8.1.0",
-    "@types/jest": "^29.5.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.0.0",
     "@types/sinon": "^17.0.4",
@@ -737,10 +735,8 @@
     "@vscode/vsce": "^2.22.0",
     "chai": "^6.0.1",
     "glob": "^10.3.0",
-    "jest": "^29.5.0",
     "mocha": "^10.2.0",
     "sinon": "^21.0.0",
-    "ts-jest": "^29.1.0",
     "typescript": "^5.9.2"
   }
 }
