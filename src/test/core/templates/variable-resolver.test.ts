@@ -7,8 +7,8 @@
 // File Name     : variable-resolver.test.ts
 // Author        : seongbeom
 // First Created : 2025/11/07
-// Last Updated  : 2025-11-07 03:46:28 (by root)
-// Editor        : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-11-07 01:40:00 UTC (by root)
+// Editor        : Visual Studio Code, tab size (2)
 // Description   : 
 //
 //     Unit tests for variable-resolver module (BDD style)

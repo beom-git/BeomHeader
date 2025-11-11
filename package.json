@@ -246,6 +246,21 @@
               "Australia/Melbourne",
               "Pacific/Auckland"
             ]
+          },
+          "beomHeader.timeZoneFormat": {
+            "type": "string",
+            "description": "How to display timezone in 'Last Updated' field",
+            "enum": [
+              "abbreviation",
+              "full",
+              "offset"
+            ],
+            "enumDescriptions": [
+              "Show as abbreviation (KST, EST, JST, etc.)",
+              "Show as full name (Asia/Seoul, America/New_York, etc.)",
+              "Show as UTC offset (UTC+9, UTC-5, etc.)"
+            ],
+            "default": "abbreviation"
           }
         }
       },

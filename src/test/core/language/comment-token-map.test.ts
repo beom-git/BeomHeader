@@ -7,8 +7,8 @@
 // File Name     : comment-token-map.test.ts
 // Author        : seongbeom
 // First Created : 2025/11/07
-// Last Updated  : 2025-11-07 03:46:28 (by root)
-// Editor        : Visual Studio Code, space size (4)
+// Last Updated  : 2025-11-11 03:50:55 UTC (by root)
+// Editor        : Visual Studio Code, space size (2)
 // Description   : 
 //
 //     Unit tests for comment-token-map module (BDD style)

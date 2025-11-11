@@ -62,6 +62,7 @@ export interface BeomHeaderConfig {
   
   // Date & Time Settings
   timeZone: string;
+  timeZoneFormat: 'abbreviation' | 'full' | 'offset';
   
   // Project Description Settings
   projectDescription: string;
@@ -112,3 +113,66 @@ export type LicenseType =
  * Header style enumeration
  */
 export type HeaderStyle = 'standard' | 'minimal' | 'detailed';
+
+/**
+ * Timezone format enumeration
+ */
+export type TimeZoneFormat = 'abbreviation' | 'full' | 'offset';
+
+/**
+ * Timezone abbreviation mapping
+ */
+export const TIMEZONE_ABBREVIATIONS: Record<string, string> = {
+  'UTC': 'UTC',
+  'Asia/Seoul': 'KST',
+  'Asia/Tokyo': 'JST',
+  'Asia/Shanghai': 'CST',
+  'Asia/Bangkok': 'ICT',
+  'Asia/Singapore': 'SGT',
+  'Asia/Hong_Kong': 'HKT',
+  'Asia/Kolkata': 'IST',
+  'Asia/Dubai': 'GST',
+  'Europe/London': 'GMT',
+  'Europe/Paris': 'CET',
+  'Europe/Berlin': 'CET',
+  'Europe/Moscow': 'MSK',
+  'America/New_York': 'EST',
+  'America/Chicago': 'CST',
+  'America/Denver': 'MST',
+  'America/Los_Angeles': 'PST',
+  'America/Toronto': 'EST',
+  'America/Mexico_City': 'CST',
+  'America/Sao_Paulo': 'BRT',
+  'Australia/Sydney': 'AEDT',
+  'Australia/Melbourne': 'AEDT',
+  'Pacific/Auckland': 'NZDT'
+};
+
+/**
+ * Timezone offset mapping (UTC+/- format)
+ */
+export const TIMEZONE_OFFSETS: Record<string, string> = {
+  'UTC': 'UTC+0',
+  'Asia/Seoul': 'UTC+9',
+  'Asia/Tokyo': 'UTC+9',
+  'Asia/Shanghai': 'UTC+8',
+  'Asia/Bangkok': 'UTC+7',
+  'Asia/Singapore': 'UTC+8',
+  'Asia/Hong_Kong': 'UTC+8',
+  'Asia/Kolkata': 'UTC+5:30',
+  'Asia/Dubai': 'UTC+4',
+  'Europe/London': 'UTC+0',
+  'Europe/Paris': 'UTC+1',
+  'Europe/Berlin': 'UTC+1',
+  'Europe/Moscow': 'UTC+3',
+  'America/New_York': 'UTC-5',
+  'America/Chicago': 'UTC-6',
+  'America/Denver': 'UTC-7',
+  'America/Los_Angeles': 'UTC-8',
+  'America/Toronto': 'UTC-5',
+  'America/Mexico_City': 'UTC-6',
+  'America/Sao_Paulo': 'UTC-3',
+  'Australia/Sydney': 'UTC+11',
+  'Australia/Melbourne': 'UTC+11',
+  'Pacific/Auckland': 'UTC+13'
+};

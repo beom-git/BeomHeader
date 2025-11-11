@@ -7,15 +7,18 @@
 // File Name     : date-utils.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-11-07 01:26:12 (by root)
+// Last Updated  : 2025-11-07 01:26:12 UTC (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file provides date and time utility functions.
 //        o Date formatting utilities
 //        o Timestamp generation with timezone support
+//        o Timezone format conversion
 //
 //----------------------------------------------------------------------
+
+import { TIMEZONE_ABBREVIATIONS, TIMEZONE_OFFSETS, TimeZoneFormat } from '../types/config.types';
 
 /**
  * Pad number with leading zeros
@@ -92,4 +95,32 @@ export function formatDate(date: Date, pattern: string): string {
 export function isValidYear(year: string): boolean {
   const yearNum = parseInt(year);
   return !isNaN(yearNum) && yearNum >= 1900 && yearNum <= new Date().getFullYear() + 10;
+}
+
+/**
+ * Get timezone display string based on format preference
+ */
+export function getTimeZoneDisplay(timeZone: string, format: TimeZoneFormat): string {
+  switch (format) {
+    case 'abbreviation':
+      return TIMEZONE_ABBREVIATIONS[timeZone] || timeZone;
+    case 'full':
+      return timeZone;
+    case 'offset':
+      return TIMEZONE_OFFSETS[timeZone] || 'UTC+0';
+    default:
+      return timeZone;
+  }
+}
+
+/**
+ * Get current timestamp with formatted timezone display
+ */
+export function getCurrentTimestampWithTZ(
+  timeZone: string = 'UTC',
+  format: TimeZoneFormat = 'abbreviation'
+): string {
+  const timestamp = getCurrentTimestamp(timeZone);
+  const tzDisplay = getTimeZoneDisplay(timeZone, format);
+  return `${timestamp} ${tzDisplay}`;
 }

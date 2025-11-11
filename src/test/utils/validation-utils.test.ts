@@ -1,22 +1,25 @@
-//----------------------------------------------------------------------
-// (C) Copyright 2023-2025 Seongbeom
+//--------------------------------------------------------------------
+// (C) Copyright 2023-2025 supergate
 //
 // All Rights Reserved
 //
-// Project Name  : VS Code Extension
+// Project Name  : CSS Application
 // File Name     : validation-utils.test.ts
 // Author        : seongbeom
 // First Created : 2025/11/07
-// Last Updated  : 2025-11-07 03:46:28 (by root)
-// Editor        : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-11-07 01:32:00 UTC (by root)
+// Editor        : Visual Studio Code, space size (2)
 // Description   : 
 //
-//     Unit tests for validation-utils module
-//        o Input validation utilities
-//        o Format validation
-//        o Error handling
+//     This module provides core functionality for the CSS Application application
+//        o 
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
+// File History :
+//      * 2025/11/11 : (v01p00,  seongbeom) First Release by 'seongbeom'
+// To-Do List   :
+//      * 2025/11/11 : (ToDo#00, seongbeom) None
+//--------------------------------------------------------------------
 
 import { expect } from 'chai';
 import {

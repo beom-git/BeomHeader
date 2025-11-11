@@ -1,4 +1,7 @@
-//----------------------------------------------------------------------
+//----// File Name     : auto-updater.test.ts
+// Author        : seongbeom
+// First Created : 2025/11/07
+// Last Updated  : 2025-11-07 01:30:00 UTC (by root)--------------------------------------------------------------
 // (C) Copyright 2023-2025 Seongbeom
 //
 // All Rights Reserved
