@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
