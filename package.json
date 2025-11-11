@@ -2,7 +2,7 @@
   "name": "beom-header",
   "displayName": "Beom Header",
   "description": "Insert standardized file headers for various file types",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "publisher": "seongbeom",
   "license": "MIT",
   "engines": {
@@ -211,6 +211,41 @@
             "type": "string",
             "description": "Path separator character for file paths",
             "default": "/"
+          }
+        }
+      },
+      {
+        "title": "Beom Header: Date & Time Settings",
+        "properties": {
+          "beomHeader.timeZone": {
+            "type": "string",
+            "description": "Time zone for timestamp generation (e.g., 'UTC', 'Asia/Seoul', 'America/New_York')",
+            "default": "UTC",
+            "enum": [
+              "UTC",
+              "Asia/Seoul",
+              "Asia/Tokyo",
+              "Asia/Shanghai",
+              "Asia/Bangkok",
+              "Asia/Singapore",
+              "Asia/Hong_Kong",
+              "Asia/Kolkata",
+              "Asia/Dubai",
+              "Europe/London",
+              "Europe/Paris",
+              "Europe/Berlin",
+              "Europe/Moscow",
+              "America/New_York",
+              "America/Chicago",
+              "America/Denver",
+              "America/Los_Angeles",
+              "America/Toronto",
+              "America/Mexico_City",
+              "America/Sao_Paulo",
+              "Australia/Sydney",
+              "Australia/Melbourne",
+              "Pacific/Auckland"
+            ]
           }
         }
       },
@@ -686,12 +721,14 @@
     "watch": "tsc -watch -p ./",
     "package": "vsce package",
     "publish": "vsce publish",
-    "test": "npm run compile && node ./out/test/runTest.js",
-    "pretest": "npm run compile"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/chai": "^5.2.2",
     "@types/glob": "^8.1.0",
+    "@types/jest": "^29.5.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.0.0",
     "@types/sinon": "^17.0.4",
@@ -700,8 +737,10 @@
     "@vscode/vsce": "^2.22.0",
     "chai": "^6.0.1",
     "glob": "^10.3.0",
+    "jest": "^29.5.0",
     "mocha": "^10.2.0",
     "sinon": "^21.0.0",
+    "ts-jest": "^29.1.0",
     "typescript": "^5.9.2"
   }
 }

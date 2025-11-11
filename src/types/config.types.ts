@@ -7,8 +7,8 @@
 // File Name     : config.types.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:51:55 (by root)
-// Editor        : Visual Studio Code, space size (2)
+// Last Updated  : 2025-11-07 01:26:12 (by root)
+// Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file defines TypeScript types for configuration settings.
@@ -58,6 +58,10 @@ export interface BeomHeaderConfig {
   // Auto-Update Settings
   autoUpdateLastModified: boolean;
   autoUpdateEditor: boolean;
+  enableConfigChangeNotifications: boolean;
+  
+  // Date & Time Settings
+  timeZone: string;
   
   // Project Description Settings
   projectDescription: string;

@@ -7,28 +7,56 @@
 // File Name     : date-utils.ts
 // Author        : seongbeom
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-12 07:26:30 (by root)
+// Last Updated  : 2025-11-07 01:26:12 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
 //     This file provides date and time utility functions.
 //        o Date formatting utilities
-//        o Timestamp generation
+//        o Timestamp generation with timezone support
 //
 //----------------------------------------------------------------------
 
 /**
- * Get today's date in YYYY/MM/DD format
+ * Pad number with leading zeros
  */
-export function getTodayFormatted(): string {
-  return new Date().toISOString().slice(0, 10).replace(/-/g, '/');
+function padZero(num: number, length: number = 2): string {
+  return num.toString().padStart(length, '0');
 }
 
 /**
- * Get current timestamp in YYYY-MM-DD HH:MM:SS format
+ * Get today's date in YYYY/MM/DD format with optional timezone
  */
-export function getCurrentTimestamp(): string {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ');
+export function getTodayFormatted(timeZone?: string): string {
+  const date = new Date();
+  const dateStr = date.toLocaleString('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: timeZone || 'UTC'
+  });
+  
+  return dateStr.replace(/-/g, '/');
+}
+
+/**
+ * Get current timestamp in YYYY-MM-DD HH:MM:SS format with optional timezone
+ */
+export function getCurrentTimestamp(timeZone?: string): string {
+  const date = new Date();
+  const dateTimeStr = date.toLocaleString('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: timeZone || 'UTC'
+  });
+  
+  // Convert "YYYY-MM-DD, HH:MM:SS" to "YYYY-MM-DD HH:MM:SS"
+  return dateTimeStr.replace(',', '');
 }
 
 /**

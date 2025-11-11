@@ -7,8 +7,8 @@
 // File Name     : variable-resolver.ts
 // Author        : seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 07:04:52 (by root)
-// Editor        : Visual Studio Code, tab size (4)
+// Last Updated  : 2025-11-07 01:26:10 (by root)
+// Editor        : Visual Studio Code, space size (2)
 // Description   : 
 //
 //     This module provides core functionality for the VS Code Extension application
@@ -257,13 +257,15 @@ export class VariableResolver {
 
   /**
    * Format author with title using hyphen separation
+   *
+   * ex, "John Doe(Senior Developer) <john.doe@example.com>"
    */
   private formatAuthorWithTitle(authorInfo: AuthorInfo): string {
     if (authorInfo.title && authorInfo.title.trim()) {
       if (authorInfo.email && authorInfo.email.trim()) {
-        return `${authorInfo.name} - ${authorInfo.title} <${authorInfo.email}>`;
+        return `${authorInfo.name}(${authorInfo.title}) <${authorInfo.email}>`;
       } else {
-        return `${authorInfo.name} - ${authorInfo.title}`;
+        return `${authorInfo.name}(${authorInfo.title})`;
       }
     } else {
       if (authorInfo.email && authorInfo.email.trim()) {

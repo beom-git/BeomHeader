@@ -7,7 +7,7 @@
 // File Name     : auto-updater.ts
 // Author        : Seongbeom (lub8881@kakao.com)
 // First Created : 2025/09/08
-// Last Updated  : 2025-09-08 05:24:04 (by root)
+// Last Updated  : 2025-11-07 01:26:12 (by root)
 // Editor        : Visual Studio Code, tab size (4)
 // Description   : 
 //
@@ -44,9 +44,9 @@ class LastModifiedUpdateStrategy implements UpdateStrategy {
   }
 
   updateLine(line: string, variables: Record<string, string>): string {
-    const now = getCurrentTimestamp();
-    const currentUser = require('os').userInfo().username;
-    const newTimestamp = `${now} (by ${currentUser})`;
+    const timestamp = variables['timestamp'];
+    const currentUser = variables['currentUser'];
+    const newTimestamp = `${timestamp} (by ${currentUser})`;
     
     // Find the comment prefix and any existing field prefix
     const match = line.match(/^(.*?)(?:\s*(?:Last\s+)*(?:Last\s+)?Updated\s*:\s*.*|Updated\s*:\s*.*)$/);
@@ -93,12 +93,20 @@ export class AutoUpdater {
    */
   public register(context: vscode.ExtensionContext): void {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const autoUpdateLastModified = config.get<boolean>('beomHeader.autoUpdateLastModified', true);
-    const autoUpdateEditor = config.get<boolean>('beomHeader.autoUpdateEditor', true);
+    const autoUpdateLastModified = config.get<boolean>('autoUpdateLastModified', true);
+    const autoUpdateEditor = config.get<boolean>('autoUpdateEditor', true);
+    
     if (!autoUpdateLastModified && !autoUpdateEditor) {
       // Do not register auto-update event if both are disabled
+      console.log('⚠️ Auto-update is disabled for both Last Modified and Editor info');
       return;
     }
+    
+    console.log('✅ Auto-update enabled:', {
+      autoUpdateLastModified,
+      autoUpdateEditor
+    });
+    
     context.subscriptions.push(
       vscode.workspace.onWillSaveTextDocument(async (event) => {
         await this.updateDocument(event.document);
@@ -157,10 +165,13 @@ export class AutoUpdater {
    */
   private async updateDocument(document: vscode.TextDocument): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const autoUpdateLastModified = config.get<boolean>('beomHeader.autoUpdateLastModified', true);
-    const autoUpdateEditor = config.get<boolean>('beomHeader.autoUpdateEditor', true);
+    const autoUpdateLastModified = config.get<boolean>('autoUpdateLastModified', true);
+    const autoUpdateEditor = config.get<boolean>('autoUpdateEditor', true);
     
-    if (!autoUpdateLastModified && !autoUpdateEditor) return;
+    if (!autoUpdateLastModified && !autoUpdateEditor) {
+      console.log('⏭️  Auto-update disabled, skipping document update');
+      return;
+    }
 
     const text = document.getText();
     const lines = text.split(/\r?\n/);
@@ -184,6 +195,7 @@ export class AutoUpdater {
           // Check if this update type is enabled
           if ((strategy.name === 'LastModified' && !autoUpdateLastModified) ||
               (strategy.name === 'EditorInfo' && !autoUpdateEditor)) {
+            console.log(`⏭️  Skipping ${strategy.name} update (disabled)`);
             continue;
           }
           
@@ -248,7 +260,22 @@ export class AutoUpdater {
    * Build variables for update strategies
    */
   private buildVariables(document: vscode.TextDocument): Record<string, string> {
+    const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
+    const timeZone = config.get<string>('timeZone', 'UTC');
     const editor = vscode.window.activeTextEditor;
+    
+    // Get timestamp with timezone support
+    const timestamp = getCurrentTimestamp(timeZone);
+    
+    // Get current username - fallback to 'root' if not available
+    let currentUser = 'root';
+    try {
+      // @ts-ignore - process is a Node.js global
+      const env = (typeof process !== 'undefined' && process.env) as any;
+      currentUser = env?.USER || env?.USERNAME || 'root';
+    } catch (e) {
+      // Fallback if process is not available
+    }
     
     let editorInfo = `${vscode.env.appName}, tab size (4)`;
     if (editor && editor.document === document) {
@@ -259,6 +286,8 @@ export class AutoUpdater {
     }
     
     return {
+      timestamp,
+      currentUser,
       editorInfo
     };
   }

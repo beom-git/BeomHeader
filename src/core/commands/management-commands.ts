@@ -214,13 +214,13 @@ export class ManagementCommands {
    */
   private async toggleAutoUpdateLastModified(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('beomHeader.autoUpdateLastModified', true);
+    const currentValue = config.get<boolean>('autoUpdateLastModified', true);
     
     await config.update('autoUpdateLastModified', !currentValue, vscode.ConfigurationTarget.Global);
     
     const message = !currentValue 
-      ? 'Auto-update Last Modified is now enabled'
-      : 'Auto-update Last Modified is now disabled';
+      ? '✅ Auto-update Last Modified timestamp is now ENABLED'
+      : '⏸️  Auto-update Last Modified timestamp is now DISABLED';
       
     vscode.window.showInformationMessage(message);
   }
@@ -230,13 +230,13 @@ export class ManagementCommands {
    */
   private async toggleAutoUpdateEditor(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('beomHeader.autoUpdateEditor', true);
+    const currentValue = config.get<boolean>('autoUpdateEditor', true);
     
     await config.update('autoUpdateEditor', !currentValue, vscode.ConfigurationTarget.Global);
     
     const message = !currentValue 
-      ? 'Auto-update Editor info is now enabled'
-      : 'Auto-update Editor info is now disabled';
+      ? '✅ Auto-update Editor info is now ENABLED'
+      : '⏸️  Auto-update Editor info is now DISABLED';
       
     vscode.window.showInformationMessage(message);
   }
@@ -246,13 +246,13 @@ export class ManagementCommands {
    */
   private async toggleLicenseHeader(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('beomHeader.includeLicenseHeader', true);
+    const currentValue = config.get<boolean>('includeLicenseHeader', true);
     
-    await config.update('beomHeader.includeLicenseHeader', !currentValue, vscode.ConfigurationTarget.Global);
+    await config.update('includeLicenseHeader', !currentValue, vscode.ConfigurationTarget.Global);
     
     const message = !currentValue 
-      ? 'License header will now be included in file headers'
-      : 'License header will no longer be included in file headers';
+      ? '✅ License header will now be INCLUDED in file headers'
+      : '⏸️  License header will NO LONGER be included in file headers';
       
     vscode.window.showInformationMessage(message);
   }
@@ -262,13 +262,13 @@ export class ManagementCommands {
    */
   private async toggleAutoIncrementVersion(): Promise<void> {
     const config = vscode.workspace.getConfiguration(EXTENSION_SECTION);
-    const currentValue = config.get<boolean>('beomHeader.autoIncrementVersion', true);
+    const currentValue = config.get<boolean>('autoIncrementVersion', true);
     
-    await config.update('beomHeader.autoIncrementVersion', !currentValue, vscode.ConfigurationTarget.Global);
+    await config.update('autoIncrementVersion', !currentValue, vscode.ConfigurationTarget.Global);
     
     const message = !currentValue 
-      ? 'Auto increment version is now enabled'
-      : 'Auto increment version is now disabled';
+      ? '✅ Auto increment version is now ENABLED'
+      : '⏸️  Auto increment version is now DISABLED';
       
     vscode.window.showInformationMessage(message);
   }
